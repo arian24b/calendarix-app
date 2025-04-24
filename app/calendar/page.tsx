@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, Clock, Plus, MoreHorizontal, CalendarIcon } from "lucide-react"
-import { ActionSheet } from "@/components/ui/action-sheet"
+import { ActionSheet } from "@/components/action-sheet"
 import { Switch } from "@/components/ui/switch"
-import { BottomNavigation } from "@/components/ui/bottom-navigation"
+import { BottomNavigation } from "@/components/bottom-navigation"
 
 interface Event {
   id: string

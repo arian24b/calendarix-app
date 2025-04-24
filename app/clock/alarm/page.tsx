@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import { ActionSheet } from "@/components/ui/action-sheet"
+import { ActionSheet } from "@/components/action-sheet"
 import { TimePicker } from "@/components/alarm/time-picker"
 import { DatePicker } from "@/components/alarm/date-picker"
 

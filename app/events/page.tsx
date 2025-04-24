@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Search, Filter } from "lucide-react"
-import { BottomNavigation } from "@/components/ui/bottom-navigation"
+import { BottomNavigation } from "@/components/bottom-navigation"
 
 interface Event {
   id: string

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ChevronLeft, Plus } from "lucide-react"
-import { ActionSheet } from "@/components/ui/action-sheet"
+import { ActionSheet } from "@/components/action-sheet"
 
 interface CategoryPageProps {
   params: {

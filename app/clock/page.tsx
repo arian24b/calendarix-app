@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { ChevronLeft, Calendar, Plus } from "lucide-react"
-import { BottomNavigation } from "@/components/ui/bottom-navigation"
+import { BottomNavigation } from "@/components/bottom-navigation"
 
 export default function ClockPage() {
   const [time, setTime] = useState(new Date())
@@ -121,7 +121,7 @@ export default function ClockPage() {
           {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
             <button
               key={index}
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-lg 
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-lg
                 ${selectedDays.includes(index) ? "bg-[#414ba4] text-white" : "text-[#8291ae]"}`}
               onClick={() => handleDayToggle(index)}
             >

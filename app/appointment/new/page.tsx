@@ -3,9 +3,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ChevronLeft, Clock, Calendar } from "lucide-react"
-import { ActionSheet } from "@/components/ui/action-sheet"
+import { ActionSheet } from "@/components/action-sheet"
 import { DatePicker } from "@/components/alarm/date-picker"
-import { BottomNavigation } from "@/components/ui/bottom-navigation"
+import { BottomNavigation } from "@/components/bottom-navigation"
 
 export default function NewAppointmentPage() {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)

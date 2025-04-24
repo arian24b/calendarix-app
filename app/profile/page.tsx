@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ChevronRight } from "lucide-react"
-import { BottomNavigation } from "@/components/ui/bottom-navigation"
+import { BottomNavigation } from "@/components/bottom-navigation"
 
 export default function ProfilePage() {
   return (

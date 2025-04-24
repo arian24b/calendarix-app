@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Plus } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
-import { BottomNavigation } from "@/components/ui/bottom-navigation"
+import { BottomNavigation } from "@/components/bottom-navigation"
 
 interface Alarm {
   id: number
