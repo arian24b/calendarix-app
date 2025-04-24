@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { ChevronLeft, Plus } from "lucide-react"
-import { ActionSheet } from "@/components/action-sheet"
+import { useState } from "react";
+import Link from "next/link";
+import { ChevronLeft, Plus } from "lucide-react";
+import { ActionSheet } from "@/components/action-sheet";
 
 interface CategoryPageProps {
   params: {
-    id: string
-  }
+    id: string;
+  };
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isAIModalOpen, setIsAIModalOpen] = useState(false)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
   // Sample category data based on ID
   const getCategoryData = (id: string) => {
@@ -21,11 +21,16 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       "1": { name: "Dietary", color: "bg-[#a9e8e8]" },
       "2": { name: "Work", color: "bg-[#f5e2a0]" },
       "3": { name: "Learn English and Arabic", color: "bg-[#d2ccf2]" },
-    }
-    return categories[id as keyof typeof categories] || { name: "Category", color: "bg-[#a9e8e8]" }
-  }
+    };
+    return (
+      categories[id as keyof typeof categories] || {
+        name: "Category",
+        color: "bg-[#a9e8e8]",
+      }
+    );
+  };
 
-  const category = getCategoryData(params.id)
+  const category = getCategoryData(params.id);
 
   return (
     <main className="flex min-h-screen flex-col bg-white">
@@ -57,7 +62,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             className="bg-[#414ba4] rounded-xl p-4 h-24 flex flex-col items-center justify-center"
           >
             <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center mb-1">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M12 2L2 7L12 12L22 7L12 2Z"
                   stroke="#414ba4"
@@ -90,7 +101,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-between px-8 py-2">
         <Link href="/" className="flex flex-col items-center text-primary">
           <div className="w-6 h-6 flex items-center justify-center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M9.02 2.84001L3.63 7.04001C2.73 7.74001 2 9.23001 2 10.36V17.77C2 20.09 3.89 21.99 6.21 21.99H17.79C20.11 21.99 22 20.09 22 17.78V10.5C22 9.29001 21.19 7.74001 20.2 7.05001L14.02 2.72001C12.62 1.74001 10.37 1.79001 9.02 2.84001Z"
                 stroke="currentColor"
@@ -109,9 +126,18 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           </div>
           <span className="text-xs mt-1">Home</span>
         </Link>
-        <Link href="/clock" className="flex flex-col items-center text-[#8291ae]">
+        <Link
+          href="/clock"
+          className="flex flex-col items-center text-[#8291ae]"
+        >
           <div className="w-6 h-6 flex items-center justify-center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2C17.52 2 22 6.48 22 12Z"
                 stroke="currentColor"
@@ -130,9 +156,18 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           </div>
           <span className="text-xs mt-1">Clock</span>
         </Link>
-        <Link href="/calendar" className="flex flex-col items-center text-[#8291ae]">
+        <Link
+          href="/calendar"
+          className="flex flex-col items-center text-[#8291ae]"
+        >
           <div className="w-6 h-6 flex items-center justify-center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M8 2V5"
                 stroke="currentColor"
@@ -211,9 +246,18 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           </div>
           <span className="text-xs mt-1">Events</span>
         </Link>
-        <Link href="/profile" className="flex flex-col items-center text-[#8291ae]">
+        <Link
+          href="/profile"
+          className="flex flex-col items-center text-[#8291ae]"
+        >
           <div className="w-6 h-6 flex items-center justify-center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M12.12 12.78C12.05 12.77 11.96 12.77 11.88 12.78C10.12 12.72 8.71997 11.28 8.71997 9.51C8.71997 7.7 10.18 6.23 12 6.23C13.81 6.23 15.28 7.7 15.28 9.51C15.27 11.28 13.88 12.72 12.12 12.78Z"
                 stroke="currentColor"
@@ -242,15 +286,36 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       </nav>
 
       {/* Add Item Modal */}
-      <ActionSheet isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)}>
+      <ActionSheet
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      >
         <div className="relative">
           <button
             onClick={() => setIsAddModalOpen(false)}
             className="absolute top-0 right-0 w-6 h-6 bg-[#414ba4] rounded-full flex items-center justify-center text-white"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 3L3 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M3 3L9 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 3L3 9"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M3 3L9 9"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
 
@@ -272,21 +337,44 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               ></textarea>
             </div>
 
-            <button className="w-full bg-[#414ba4] text-white font-medium py-3 rounded-lg">CREATE EVENT</button>
+            <button className="w-full bg-[#414ba4] text-white font-medium py-3 rounded-lg">
+              CREATE EVENT
+            </button>
           </div>
         </div>
       </ActionSheet>
 
       {/* AI Modal */}
-      <ActionSheet isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)}>
+      <ActionSheet
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+      >
         <div className="relative">
           <button
             onClick={() => setIsAIModalOpen(false)}
             className="absolute top-0 right-0 w-6 h-6 bg-[#414ba4] rounded-full flex items-center justify-center text-white"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 3L3 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M3 3L9 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 3L3 9"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M3 3L9 9"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
 
@@ -294,7 +382,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[#8291ae] mb-2">What is the goal of the diet?</label>
+              <label className="block text-sm font-medium text-[#8291ae] mb-2">
+                What is the goal of the diet?
+              </label>
               <div className="relative">
                 <select className="w-full p-3 border border-[#d7dfee] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#414ba4] appearance-none pr-10">
                   <option>Weight loss</option>
@@ -305,7 +395,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                   <option>Vegetarian</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                     <path
                       d="M2 4L6 8L10 4"
                       stroke="#8291ae"
@@ -320,7 +416,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#8291ae] mb-2">Age</label>
+                <label className="block text-sm font-medium text-[#8291ae] mb-2">
+                  Age
+                </label>
                 <div className="relative">
                   <select className="w-full p-3 border border-[#d7dfee] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#414ba4] appearance-none pr-10">
                     <option>18-24</option>
@@ -330,7 +428,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                     <option>55+</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
                       <path
                         d="M2 4L6 8L10 4"
                         stroke="#8291ae"
@@ -344,7 +448,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#8291ae] mb-2">Height</label>
+                <label className="block text-sm font-medium text-[#8291ae] mb-2">
+                  Height
+                </label>
                 <div className="relative">
                   <input
                     type="text"
@@ -357,7 +463,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#8291ae] mb-2">Gender</label>
+                <label className="block text-sm font-medium text-[#8291ae] mb-2">
+                  Gender
+                </label>
                 <div className="relative">
                   <select className="w-full p-3 border border-[#d7dfee] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#414ba4] appearance-none pr-10">
                     <option>Male</option>
@@ -365,7 +473,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                     <option>Other</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
                       <path
                         d="M2 4L6 8L10 4"
                         stroke="#8291ae"
@@ -379,7 +493,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#8291ae] mb-2">Weight</label>
+                <label className="block text-sm font-medium text-[#8291ae] mb-2">
+                  Weight
+                </label>
                 <div className="relative">
                   <input
                     type="text"
@@ -391,15 +507,24 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#8291ae] mb-2">ACTIVITY LEVEL</label>
-              <p className="text-xs text-[#8291ae] mb-2">How much physical activity do you do daily?</p>
+              <label className="block text-sm font-medium text-[#8291ae] mb-2">
+                ACTIVITY LEVEL
+              </label>
+              <p className="text-xs text-[#8291ae] mb-2">
+                How much physical activity do you do daily?
+              </p>
               <div className="flex space-x-4">
                 <label className="flex items-center">
                   <input type="radio" name="activity" className="mr-2" />
                   <span className="text-sm">Low</span>
                 </label>
                 <label className="flex items-center">
-                  <input type="radio" name="activity" className="mr-2" checked />
+                  <input
+                    type="radio"
+                    name="activity"
+                    className="mr-2"
+                    checked
+                  />
                   <span className="text-sm">Moderate</span>
                 </label>
                 <label className="flex items-center">
@@ -410,7 +535,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#8291ae] mb-2">DISEASES OR ALLERGIES</label>
+              <label className="block text-sm font-medium text-[#8291ae] mb-2">
+                DISEASES OR ALLERGIES
+              </label>
               <p className="text-xs text-[#8291ae] mb-2">
                 Do you have any specific medical conditions or food allergies?
               </p>
@@ -420,10 +547,12 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               ></textarea>
             </div>
 
-            <button className="w-full bg-[#414ba4] text-white font-medium py-3 rounded-lg">CREATE EVENT</button>
+            <button className="w-full bg-[#414ba4] text-white font-medium py-3 rounded-lg">
+              CREATE EVENT
+            </button>
           </div>
         </div>
       </ActionSheet>
     </main>
-  )
+  );
 }

@@ -4,6 +4,15 @@ import { Providers } from "@/app/providers";
 import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import config from "@/lib/config";
+import dynamic from "next/dynamic";
+
+// Dynamically import the InstallPWA component to avoid SSR issues
+const InstallPWA = dynamic(
+  () => import("@/components/InstallPWA").then((mod) => mod.InstallPWA),
+  {
+    ssr: false,
+  }
+);
 
 export const metadata: Metadata = {
   metadataBase: new URL(config.site.url),
@@ -73,7 +82,10 @@ export default function RootLayout({
       className="scroll-smooth"
     >
       <body className={cn("min-h-screen bg-background Inter antialiased ltr")}>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <InstallPWA />
+        </Providers>
       </body>
     </html>
   );

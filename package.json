@@ -7,11 +7,18 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "export": "next export",
     "deploy": "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && HOSTNAME=127.0.0.1 node .next/standalone/server.js",
     "docs": "uvx gitingest . -o docs/docs.txt -e docs/docs.txt -e package-lock.json -e .next -e node_modules",
-    "check": "ncu -u;npm-check;depcheck"
+    "check": "ncu -u;npm-check;depcheck",
+    "export-mobile": "node scripts/export-pwa.js",
+    "cap-sync": "npx cap sync"
   },
   "dependencies": {
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/cli": "^7.2.0",
+    "@capacitor/core": "^7.2.0",
+    "@capacitor/ios": "^7.2.0",
     "@eslint/eslintrc": "^3.3.1",
     "@radix-ui/react-dialog": "^1.1.11",
     "@radix-ui/react-navigation-menu": "^1.2.10",
@@ -26,6 +33,7 @@
     "framer-motion": "^12.9.0",
     "lucide-react": "^0.503.0",
     "next": "^15.3.1",
+    "next-pwa": "^5.6.0",
     "next-themes": "^0.4.4",
     "react": "^19",
     "react-dom": "^19",
