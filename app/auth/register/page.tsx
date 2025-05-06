@@ -149,9 +149,9 @@ export default function RegisterPage() {
       </div>
 
       <div className="relative flex items-center justify-center mb-4">
-        <div className="border-t border-gray-300 flex-grow"></div>
+        <div className="border-t border-gray-300 grow"></div>
         <div className="mx-4 text-sm text-gray-500">Or</div>
-        <div className="border-t border-gray-300 flex-grow"></div>
+        <div className="border-t border-gray-300 grow"></div>
       </div>
 
       <form onSubmit={handleRegister} className="space-y-4">

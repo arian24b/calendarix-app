@@ -40,7 +40,7 @@ export function FooterNav({ currentPath }: FooterNavProps) {
       <div
         className={cn(
           "fixed bottom-0 left-0 right-0 bg-background border-t z-50 transition-transform duration-300",
-          !visible && "translate-y-full",
+          visible! && "translate-y-full",
         )}
       >
         <div className="flex items-center justify-around h-16">
