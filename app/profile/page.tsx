@@ -25,7 +25,7 @@ import {
 import { Bell, Camera, ChevronRight, LogOut, Moon, User } from "lucide-react"
 import { FooterNav } from "@/components/footer-nav"
 import { useTheme } from "next-themes"
-import { getCurrentUser, updateProfile } from "@/lib/actions/user.actions"
+import { getCurrentUser, updateProfile } from "@/lib/actions/user-actions"
 
 // Mock user data
 // const mockUser = {
