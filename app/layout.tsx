@@ -1,92 +1,52 @@
-import type React from "react";
-import { cn } from "@/lib/utils";
-import { Providers } from "@/app/providers";
-import type { Metadata, Viewport } from "next";
-import "@/styles/globals.css";
-import config from "@/lib/config";
-import dynamic from "next/dynamic";
+import type React from "react"
+import type { Metadata, Viewport } from "next/types"
+import { Inter } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
+import "./globals.css"
+import { ApiProvider } from "@/components/api-provider"
+import { AuthProvider } from "@/contexts/auth-context"
 
-// Dynamically import the InstallPWA component to avoid SSR issues
-const InstallPWA = dynamic(
-  () => import("@/components/InstallPWA").then((mod) => mod.InstallPWA),
-  {
-    ssr: false,
-  }
-);
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(config.site.url),
-  applicationName: config.site.name,
-  title: config.site.name,
-  description: config.site.description,
-  keywords: [
-    "Monthly",
-    "Calendar",
-    "Events",
-    "Organized",
-    "Categories",
-    "Tasks",
-    "Clock",
-    "Alarm",
-    "Google Calendar",
-    "Integration",
-    "Notifications",
-    "AI-Powered",
-    "Smart Plans",
-    "User Input",
-    "Workout Plans",
-    "Dietary Regimes",
-    "Profile",
-    "Settings",
-    "Planning",
-    "Management",
-  ],
-  authors: [{ name: "S2DIO", url: "https://s2dio.ir" }],
-  openGraph: {
-    title: config.seo.defaultTitle,
-    description: config.seo.defaultDescription,
-    url: config.site.url,
-    siteName: config.site.name,
-    images: config.seo.openGraph.images,
-    locale: config.site.defaultLocale,
+  title: "Calendarix",
+  description: "Your personal life management assistant",
+  manifest: "/manifest.json",
+  icons: {
+    apple: "/icons/icon-512x512.png",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: config.seo.defaultTitle,
-    description: config.seo.defaultDescription,
-    images: `${config.site.url}/og-image.jpg`,
-    creator: config.seo.twitter.handle,
-  },
-  robots: "index, follow",
-};
+    generator: 'v0.dev'
+}
 
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
   ],
   width: "device-width",
   initialScale: 1,
-};
+  maximumScale: 1,
+  userScalable: false,
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="en"
-      dir="ltr"
-      suppressHydrationWarning
-      className="scroll-smooth"
-    >
-      <body className={cn("min-h-screen bg-background Inter antialiased ltr")}>
-        <Providers>
-          {children}
-          <InstallPWA />
-        </Providers>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AuthProvider>
+            <ApiProvider>
+              {children}
+              <Toaster />
+            </ApiProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

@@ -1,66 +1,101 @@
-export interface UserCreate {
-  username: string
-  email: string
-  phone?: string
-  password: string
-}
+// Type definitions based on the OpenAPI specification
 
+// Authentication types
 export interface Token {
   access_token: string
   token_type: string
+}
+
+export interface UserCreate {
+  username: string
+  email: string
+  password: string
+  phone?: string
+}
+
+export interface ProfileUpdate {
+  username?: string
+  phone?: string
+}
+
+export interface PasswordResetRequest {
+  email: string
+}
+
+export interface PasswordResetConfirm {
+  token: string
+  new_password: string
+}
+
+export interface TwoFactorVerify {
+  token: string
+}
+
+export interface TwoFactorSetupResponse {
+  secret: string
+  otp_auth_url: string
 }
 
 export interface MessageResponse {
   message: string
 }
 
-export interface User {
-  id: number
-  username: string
-  email: string
-  phone?: string
-  is_active: boolean
-  is_verified: boolean
+// Calendar types
+export interface CalendarCreate {
+  name: string
+  provider: string
+}
+
+export interface CalendarOut {
+  id: string
+  user_id: number
+  name: string
+  provider: string
+  external_calendar_id: string | null
   created_at: string
-  updated_at: string
+  updated_at: string | null
 }
 
-export interface ValidationError {
-  loc: (string | number)[]
-  msg: string
-  type: string
+export interface EventCreate {
+  title: string
+  start_time: string
+  end_time?: string | null
 }
 
-export interface HTTPValidationError {
-  detail: ValidationError[]
+export interface EventOut {
+  id: string
+  calendar_id: string
+  title: string
+  start_time: string
+  end_time: string | null
+  created_at: string
+  updated_at: string | null
 }
 
-export interface ApiError {
-  detail: string
+// Subscription types
+export interface SubscriptionRequest {
+  email: string
+  requestdata: Record<string, any> | null
 }
 
-// Specific error types from the API spec
-export interface PasswordValidationError extends ApiError {
-  detail:
-    | "Password must be at least 8 characters long"
-    | "Password must contain an uppercase letter"
-    | "Password must contain a lowercase letter"
-    | "Password must contain a digit"
-    | "Password must contain a special character"
+export interface SubscriptionResponse {
+  message: string
 }
 
-export interface UserExistsError extends ApiError {
-  detail: "User already exists"
+export interface SubscriptionCountResponse {
+  subscribed_count: number
 }
 
-export interface InvalidCredentialsError extends ApiError {
-  detail: "Invalid credentials"
+// Form types
+export interface FormCreate {
+  name: string
+  email: string
+  data: Record<string, any>
 }
 
-export interface AccountLockedError extends ApiError {
-  detail: "Account locked. Try again later."
-}
-
-export interface UserNotFoundError extends ApiError {
-  detail: "User not found"
+export interface FormResponse {
+  id: number
+  name: string
+  email: string
+  data: Record<string, any>
 }
