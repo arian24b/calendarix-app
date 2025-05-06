@@ -10,9 +10,7 @@
     "export": "next export",
     "deploy": "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && HOSTNAME=127.0.0.1 node .next/standalone/server.js",
     "docs": "uvx gitingest . -o docs/docs.txt -e docs/docs.txt -e package-lock.json -e .next -e node_modules",
-    "check": "ncu -u;npm-check;depcheck",
-    "export-mobile": "node scripts/export-pwa.js",
-    "cap-sync": "npx cap sync"
+    "check": "ncu -u;npm-check;depcheck"
   },
   "dependencies": {
     "@capacitor/android": "^7.2.0",
