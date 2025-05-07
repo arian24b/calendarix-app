@@ -49,8 +49,8 @@ const initialAlarms = [
 const alarmSchema = z.object({
   time: z.string(),
   label: z.string().optional(),
-  repeat: z.array(z.string()).default([]),
-  sound: z.string().default("Chimes"),
+  repeat: z.array(z.string()),
+  sound: z.string(),
 })
 
 export default function AlarmPage() {
