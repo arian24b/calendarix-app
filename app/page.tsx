@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 
 export default function SplashScreen() {
   const router = useRouter()
@@ -19,15 +20,13 @@ export default function SplashScreen() {
 
       // After splash fades out, redirect to appropriate screen
       setTimeout(() => {
-        if (isAuthenticated) {
+        if (hasSeenOnboarding) {
           router.push("/calendar")
-        } else if (hasSeenOnboarding) {
-          router.push("/auth/login")
         } else {
           router.push("/onboarding")
         }
       }, 500) // Wait for fade out animation to complete
-    }, 5000) // Show splash for 2 seconds
+    }, 5000) // Show splash for 5 seconds
 
     return () => clearTimeout(timer)
   }, [router])
@@ -42,13 +41,13 @@ export default function SplashScreen() {
           transition={{ duration: 0.5 }}
           style={{
             backgroundImage: "url('icons/ee701a3b27c3366c254af783cea70646a465e133.png')",
-            backgroundSize: "cover",
+            backgroundSize: "auto",
             backgroundPosition: "center"
           }}
         >
 
           <div className="flex items-center justify-center mb-6 gap-1">
-            <img src="/icons/icon.png" alt="Calendarix Logo" className="size-12 rounded-xl" />
+            <Image src="/icons/icon.png" alt="Calendarix Logo" className="size-12 rounded-xl" />
             <h1 className="text-center justify-start text-white text-xl font-normal font-['Inter'] leading-relaxed">Calendarix</h1>
           </div>
 
