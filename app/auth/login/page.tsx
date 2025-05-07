@@ -115,38 +115,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 p-4">
+    <div className="flex flex-col min-h-screen p-4 py-20">
       <div className="flex flex-col items-center justify-center mb-8 mt-8">
-        <div className="w-16 h-16 bg-indigo-100 rounded-lg flex items-center justify-center mb-2">
-          <svg className="w-10 h-10 text-indigo-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-            <path d="M16 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            <path d="M8 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            <path d="M3 10H21" stroke="currentColor" strokeWidth="2" />
-          </svg>
+        <div className="flex items-center justify-center mb-6 gap-1">
+          <img src="/icons/icon.png" alt="Calendarix Logo" className="size-12 rounded-xl" />
+          <h1 className="text-center justify-start text-gray-600 text-xl font-normal leading-relaxed">Calendarix</h1>
         </div>
-        <h1 className="text-xl font-semibold text-indigo-600">Calendarix</h1>
-        <p className="text-sm text-gray-500 text-center mt-2">
+        <p className="self-stretch text-center justify-start text-gray-500 text-base font-normal leading-normal">
           Take control of your life by organizing it and creating routines!
         </p>
       </div>
 
       <div className="flex gap-4 mb-4">
         <button
-          className="flex-1 flex items-center justify-center gap-2 bg-blue-100 text-blue-600 py-3 rounded-lg"
-          onClick={() => handleSocialLogin("facebook")}
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z" />
-          </svg>
-          <span>Facebook</span>
-        </button>
-        <button
           className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-500 py-3 rounded-lg"
           onClick={() => handleSocialLogin("google")}
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.372 0 0 5.373 0 12s5.372 12 12 12 12-5.373 12-12S18.628 0 12 0zm6.804 16.864c-.243.668-.687 1.193-1.299 1.572-.612.378-1.296.571-2.052.571-.707 0-1.333-.159-1.88-.476-.546-.317-.97-.772-1.27-1.366-.3-.593-.45-1.294-.45-2.101 0-.804.15-1.507.45-2.104.3-.597.724-1.056 1.27-1.373.546-.317 1.173-.476 1.88-.476.755 0 1.439.194 2.05.583.611.389 1.055.92 1.3 1.567l-1.609.673c-.146-.359-.383-.636-.712-.828-.33-.192-.727-.288-1.19-.288-.435 0-.82.101-1.156.305-.336.203-.596.488-.78.853-.183.365-.275.784-.275 1.258 0 .473.092.89.275 1.253.184.363.444.645.78.847.336.201.721.302 1.156.302.464 0 .86-.096 1.19-.288.33-.192.566-.472.712-.84l1.61.673zm-7.804-4.864v1h-2v1h2v1h-2v1h2v1h-3v-5h3zm-4-3h-1v5h-1v-5h-1v-1h3v1z" />
+          <svg className="size-5" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
+            <path fill="#4caf50" d="M45,16.2l-5,2.75l-5,4.75L35,40h7c1.657,0,3-1.343,3-3V16.2z"></path><path fill="#1e88e5" d="M3,16.2l3.614,1.71L13,23.7V40H6c-1.657,0-3-1.343-3-3V16.2z"></path><polygon fill="#e53935" points="35,11.2 24,19.45 13,11.2 12,17 13,23.7 24,31.95 35,23.7 36,17"></polygon><path fill="#c62828" d="M3,12.298V16.2l10,7.5V11.2L9.876,8.859C9.132,8.301,8.228,8,7.298,8h0C4.924,8,3,9.924,3,12.298z"></path><path fill="#fbc02d" d="M45,12.298V16.2l-10,7.5V11.2l3.124-2.341C38.868,8.301,39.772,8,40.702,8h0 C43.076,8,45,9.924,45,12.298z"></path>
           </svg>
           <span>Google</span>
         </button>
@@ -159,7 +145,7 @@ export default function LoginPage() {
       </div>
 
       <form onSubmit={handleLogin} className="space-y-4">
-        <div>
+        <div className="relative">
           <Input
             type="email"
             placeholder="Email"
@@ -187,20 +173,20 @@ export default function LoginPage() {
         </div>
 
         <div className="text-right">
-          <button type="button" className="text-sm text-indigo-600" onClick={() => setShowForgotPassword(true)}>
+          <button type="button" className="justify-start text-slate-500 text-xs font-normal leading-snug" onClick={() => setShowForgotPassword(true)}>
             Forgot Password?
           </button>
         </div>
 
-        <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" disabled={isLoading}>
+        <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white uppercase" disabled={isLoading}>
           {isLoading ? "LOGGING IN..." : "LOGIN"}
         </Button>
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm font-medium text-gray-600">
           Don't have an account?{" "}
-          <Link href="/auth/register" className="text-indigo-600 font-medium">
+          <Link href="/auth/register" className="text-indigo-600 text-sm font-medium">
             Sign Up
           </Link>
         </p>

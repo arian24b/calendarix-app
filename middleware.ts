@@ -24,7 +24,7 @@ export function middleware(request: NextRequest) {
   // If the path requires authentication and there's no token, redirect to login
   if (!isPublicPath && !token) {
     const url = new URL("/auth/login", request.url)
-    url.searchParams.set("callbackUrl", encodeURI(request.url))
+    url.searchParams.set("callbackUrl", request.nextUrl.pathname + request.nextUrl.search)
     return NextResponse.redirect(url)
   }
 

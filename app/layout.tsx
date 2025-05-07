@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next/types"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
-import "./globals.css"
+import "@/styles/globals.css"
 import { ApiProvider } from "@/components/api-provider"
 import { AuthProvider } from "@/contexts/auth-context"
 
@@ -15,8 +15,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     apple: "/icons/icon-512x512.png",
-  },
-    generator: 'v0.dev'
+  }
 }
 
 export const viewport: Viewport = {
@@ -38,11 +37,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <AuthProvider>
             <ApiProvider>
               {children}
-              <Toaster />
+              <Toaster position="top-center" richColors />
             </ApiProvider>
           </AuthProvider>
         </ThemeProvider>

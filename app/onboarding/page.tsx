@@ -9,8 +9,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 const onboardingSlides = [
   {
-    title: "Welcome to Calendarix",
-    description: "Your personal time management assistant that helps you stay organized and on schedule.",
+    title: "",
+    description: "It'S Time to Organize your Day!",
     image: "/placeholder.svg?height=300&width=300",
   },
   {
@@ -96,6 +96,11 @@ export default function OnboardingPage() {
               transition={{ duration: 0.4, ease: "easeInOut" }}
               className="flex flex-col items-center text-center"
             >
+              <div className="flex items-center justify-center mb-6 gap-2">
+                <img src="/icons/icon.png" alt="Calendarix Logo" className="size-15 rounded-xl" />
+                <h1 className="text-xl font-bold ">Calendarix</h1>
+              </div>
+
               <div className="mb-8 relative w-64 h-64">
                 <Image
                   src={onboardingSlides[currentSlide].image || "/placeholder.svg"}
@@ -114,9 +119,8 @@ export default function OnboardingPage() {
           {onboardingSlides.map((_, index) => (
             <div
               key={index}
-              className={`h-2 rounded-full transition-all ${
-                currentSlide === index ? "w-8 bg-indigo-600" : "w-2 bg-muted"
-              }`}
+              className={`h-2 rounded-full transition-all ${currentSlide === index ? "w-8 bg-indigo-600" : "w-2 bg-muted"
+                }`}
             />
           ))}
         </div>

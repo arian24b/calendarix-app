@@ -356,13 +356,12 @@ export default function CalendarPage() {
                 return (
                   <div
                     key={dayIndex}
-                    className={`h-12 flex flex-col items-center justify-start p-1 rounded-md cursor-pointer ${
-                      day.month === "current"
+                    className={`h-12 flex flex-col items-center justify-start p-1 rounded-md cursor-pointer ${day.month === "current"
                         ? isSelected
                           ? "bg-indigo-600 text-white"
                           : "text-gray-700"
                         : "text-gray-400"
-                    }`}
+                      }`}
                     onClick={() => handleDayClick(day.day, day.month)}
                   >
                     <span className="text-sm">{day.day}</span>
@@ -375,9 +374,8 @@ export default function CalendarPage() {
                               .map((_, j) => (
                                 <div
                                   key={j}
-                                  className={`w-1 h-1 rounded-full ${
-                                    eventGroup.color === "blue" ? "bg-blue-500" : "bg-green-500"
-                                  }`}
+                                  className={`w-1 h-1 rounded-full ${eventGroup.color === "blue" ? "bg-blue-500" : "bg-green-500"
+                                    }`}
                                 />
                               ))}
                           </div>
@@ -475,11 +473,11 @@ export default function CalendarPage() {
                 <span className="text-gray-700">
                   {selectedDate
                     ? selectedDate.toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
                     : "Select date"}
                 </span>
               </div>

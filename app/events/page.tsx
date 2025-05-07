@@ -158,27 +158,24 @@ export default function EventsPage() {
         <div className="flex mb-6 rounded-lg overflow-hidden border border-gray-200">
           <Button
             variant={activeTab === "today" ? "default" : "ghost"}
-            className={`flex-1 rounded-none ${
-              activeTab === "today" ? "bg-indigo-600 text-white" : "bg-white text-gray-700"
-            }`}
+            className={`flex-1 rounded-none ${activeTab === "today" ? "bg-indigo-600 text-white" : "bg-white text-gray-700"
+              }`}
             onClick={() => setActiveTab("today")}
           >
             TODAY
           </Button>
           <Button
             variant={activeTab === "week" ? "default" : "ghost"}
-            className={`flex-1 rounded-none ${
-              activeTab === "week" ? "bg-indigo-600 text-white" : "bg-white text-gray-700"
-            }`}
+            className={`flex-1 rounded-none ${activeTab === "week" ? "bg-indigo-600 text-white" : "bg-white text-gray-700"
+              }`}
             onClick={() => setActiveTab("week")}
           >
             WEEK
           </Button>
           <Button
             variant={activeTab === "month" ? "default" : "ghost"}
-            className={`flex-1 rounded-none ${
-              activeTab === "month" ? "bg-indigo-600 text-white" : "bg-white text-gray-700"
-            }`}
+            className={`flex-1 rounded-none ${activeTab === "month" ? "bg-indigo-600 text-white" : "bg-white text-gray-700"
+              }`}
             onClick={() => setActiveTab("month")}
           >
             MONTH
