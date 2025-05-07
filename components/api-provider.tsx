@@ -35,7 +35,7 @@ export function ApiProvider({ children }: { children: ReactNode }) {
             if (data.detail === "Not authenticated" || data.detail === "Invalid token") {
               localStorage.removeItem("token")
               toast.error("Session expired. Please log in again.")
-              router.push("/auth/login")
+              // router.push("/auth/login")
             }
           } catch (e) {
             // If we can't parse the response, just continue

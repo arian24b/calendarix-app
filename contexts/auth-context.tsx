@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("token")
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
     setUser(null)
-    router.push("/auth/login")
+    // router.push("/auth/login")
   }
 
   return (
