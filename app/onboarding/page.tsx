@@ -57,7 +57,7 @@ export default function OnboardingPage() {
 
   const completeOnboarding = () => {
     localStorage.setItem("hasSeenOnboarding", "true")
-    router.push("/auth/login")
+    // router.push("/auth/login")
   }
 
   const variants = {

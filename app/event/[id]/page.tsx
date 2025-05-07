@@ -70,11 +70,11 @@ export default function EventDetailPage() {
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem("token")
-    if (!token) {
-      router.push("/auth/login")
-      return
-    }
+    // const token = localStorage.getItem("token")
+    // if (!token) {
+    //   router.push("/auth/login")
+    //   return
+    // }
 
     // Fetch event details
     const foundEvent = mockEvents.find((e) => e.id === eventId)

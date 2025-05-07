@@ -74,11 +74,11 @@ export default function AlarmPage() {
   // Update the useEffect to load alarms from localStorage
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem("token")
-    if (!token) {
-      router.push("/auth/login")
-      return
-    }
+    // const token = localStorage.getItem("token")
+    // if (!token) {
+    //   router.push("/auth/login")
+    //   return
+    // }
 
     // Load alarms from localStorage
     setAlarms(getAlarms())
