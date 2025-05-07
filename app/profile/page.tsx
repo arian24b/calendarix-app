@@ -59,13 +59,6 @@ export default function ProfilePage() {
   })
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem("token")
-    if (!token) {
-      router.push("/auth/login")
-      return
-    }
-
     // Fetch user profile from API
     const fetchUserProfile = async () => {
       try {
@@ -79,13 +72,14 @@ export default function ProfilePage() {
       } catch (error) {
         toast.error("Failed to load profile")
         console.error(error)
+        // If there's an authentication error, the middleware will handle the redirect
       } finally {
         setLoading(false)
       }
     }
 
     fetchUserProfile()
-  }, [router, form])
+  }, [form])
 
   const onSubmit = async (values: z.infer<typeof profileSchema>) => {
     try {
