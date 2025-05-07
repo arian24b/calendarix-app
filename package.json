@@ -46,6 +46,7 @@
     "@serwist/precaching": "latest",
     "@serwist/sw": "latest",
     "@tailwindcss/postcss": "^4.1.5",
+    "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
