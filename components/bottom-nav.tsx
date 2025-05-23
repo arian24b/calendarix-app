@@ -13,13 +13,13 @@ export function BottomNav({ currentPath }: BottomNavProps) {
   const pathname = usePathname()
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
       <div className="flex items-center justify-around h-16">
         <button
           onClick={() => router.push("/categories")}
           className={cn(
-            "flex flex-col items-center justify-center w-full h-full",
-            pathname === "/categories" ? "text-indigo-600" : "text-gray-500",
+            "flex flex-col items-center justify-center w-full h-full transition-colors",
+            pathname.includes("/categories") || pathname.includes("/category") ? "text-[#4355B9]" : "text-gray-500",
           )}
         >
           <LayoutGrid className="h-5 w-5" />
@@ -29,8 +29,8 @@ export function BottomNav({ currentPath }: BottomNavProps) {
         <button
           onClick={() => router.push("/clock")}
           className={cn(
-            "flex flex-col items-center justify-center w-full h-full",
-            pathname === "/clock" ? "text-indigo-600" : "text-gray-500",
+            "flex flex-col items-center justify-center w-full h-full transition-colors",
+            pathname.includes("/clock") ? "text-[#4355B9]" : "text-gray-500",
           )}
         >
           <Clock className="h-5 w-5" />
@@ -40,8 +40,8 @@ export function BottomNav({ currentPath }: BottomNavProps) {
         <button
           onClick={() => router.push("/calendar")}
           className={cn(
-            "flex flex-col items-center justify-center w-full h-full",
-            pathname === "/calendar" ? "text-indigo-600" : "text-gray-500",
+            "flex flex-col items-center justify-center w-full h-full transition-colors",
+            pathname.includes("/calendar") ? "text-[#4355B9]" : "text-gray-500",
           )}
         >
           <Calendar className="h-5 w-5" />
@@ -51,8 +51,8 @@ export function BottomNav({ currentPath }: BottomNavProps) {
         <button
           onClick={() => router.push("/events")}
           className={cn(
-            "flex flex-col items-center justify-center w-full h-full",
-            pathname === "/events" ? "text-indigo-600" : "text-gray-500",
+            "flex flex-col items-center justify-center w-full h-full transition-colors",
+            pathname === "/events" ? "text-[#4355B9]" : "text-gray-500",
           )}
         >
           <FileText className="h-5 w-5" />
@@ -62,8 +62,8 @@ export function BottomNav({ currentPath }: BottomNavProps) {
         <button
           onClick={() => router.push("/profile")}
           className={cn(
-            "flex flex-col items-center justify-center w-full h-full",
-            pathname === "/profile" ? "text-indigo-600" : "text-gray-500",
+            "flex flex-col items-center justify-center w-full h-full transition-colors",
+            pathname.includes("/profile") ? "text-[#4355B9]" : "text-gray-500",
           )}
         >
           <User className="h-5 w-5" />
