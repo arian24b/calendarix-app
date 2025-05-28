@@ -53,20 +53,19 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/png",
       },
       {
-        src: "/icons/maskable-icon.png",
+        src: "/icons/maskable-icon-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icons/maskable-icon-512x512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/icons/monochrome-icon.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "monochrome",
-      },
-      // Apple touch icon is handled separately in the layout.tsx head
-      {
-        src: "/apple-touch-icon.png",
+        src: "/icons/apple-touch-icon.png",
         sizes: "180x180",
         type: "image/png",
       }

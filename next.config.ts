@@ -9,6 +9,9 @@ const withPWA = withSerwistInit({
   // Disable the service worker in development for easier testing
   // Set to false to test in development
   disable: false,
+  cacheOnNavigation: true,
+  reloadOnOnline: true,
+  swUrl: "/sw.js",
 });
 
 const nextConfig: NextConfig = {
