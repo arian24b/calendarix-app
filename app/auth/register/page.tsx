@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -48,28 +47,25 @@ export default function RegisterPage() {
         password: password,
       })
 
-      // Store token and redirect
-      localStorage.setItem("token", response.access_token)
-
-      // Store user info for preview mode
-      localStorage.setItem(
-        "userInfo",
-        JSON.stringify({
-          username: name,
-          email: email,
-          created_at: new Date().toISOString(),
-        }),
-      )
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", response.access_token)
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify({
+            username: name,
+            email: email,
+            created_at: new Date().toISOString(),
+          }),
+        )
+      }
 
       toast.success("Account created successfully!")
-
-      // Small delay to show the success message
       setTimeout(() => {
         router.push("/categories")
       }, 1000)
     } catch (error: any) {
       console.error("Registration error:", error)
-      toast.error("Registration failed. Please try again.")
+      toast.error(error.message || "Registration failed. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -80,22 +76,22 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-gray-50">
-      <div className="w-full max-w-sm space-y-8">
+    <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-white">
+      <div className="w-full max-w-sm space-y-6">
         {/* Logo and Title */}
         <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <div className="w-16 h-16 bg-[#4355B9] rounded-2xl flex items-center justify-center">
-              <div className="grid grid-cols-2 gap-1">
-                <div className="w-2 h-2 bg-white rounded-sm"></div>
-                <div className="w-2 h-2 bg-white rounded-sm"></div>
-                <div className="w-2 h-2 bg-white rounded-sm"></div>
-                <div className="w-2 h-2 bg-white rounded-sm"></div>
+          <div className="flex justify-center items-center space-x-3">
+            <div className="w-10 h-10 bg-[#4355B9] rounded-lg flex items-center justify-center">
+              <div className="grid grid-cols-2 gap-0.5">
+                <div className="w-1.5 h-1.5 bg-white rounded-sm"></div>
+                <div className="w-1.5 h-1.5 bg-white rounded-sm"></div>
+                <div className="w-1.5 h-1.5 bg-white rounded-sm"></div>
+                <div className="w-1.5 h-1.5 bg-white rounded-sm"></div>
               </div>
             </div>
+            <h1 className="text-xl font-medium text-gray-800">Calendarix</h1>
           </div>
-          <h1 className="text-2xl font-medium text-gray-800">Calendarix</h1>
-          <p className="text-gray-600 text-center leading-relaxed">
+          <p className="text-gray-600 text-sm leading-relaxed px-4">
             Take control of your life by organizing it and creating routines!
           </p>
         </div>
@@ -104,22 +100,22 @@ export default function RegisterPage() {
         <div className="space-y-3">
           <Button
             variant="outline"
-            className="w-full h-12 bg-[#E8F0FE] border-[#E8F0FE] hover:bg-[#D2E3FC]"
+            className="w-full h-12 bg-[#E8F0FE] border-[#E8F0FE] hover:bg-[#D2E3FC] text-gray-700"
             onClick={() => handleSocialLogin("Facebook")}
           >
-            <div className="w-6 h-6 bg-[#1877F2] rounded mr-3 flex items-center justify-center">
-              <span className="text-white text-sm font-bold">f</span>
+            <div className="w-5 h-5 bg-[#1877F2] rounded mr-3 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">f</span>
             </div>
-            <span className="text-gray-700">Facebook</span>
+            Facebook
           </Button>
 
           <Button
             variant="outline"
-            className="w-full h-12 bg-[#E8F0FE] border-[#E8F0FE] hover:bg-[#D2E3FC]"
+            className="w-full h-12 bg-[#E8F0FE] border-[#E8F0FE] hover:bg-[#D2E3FC] text-gray-700"
             onClick={() => handleSocialLogin("Google")}
           >
-            <div className="w-6 h-6 mr-3 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5">
+            <div className="w-5 h-5 mr-3 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-4 h-4">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -138,18 +134,13 @@ export default function RegisterPage() {
                 />
               </svg>
             </div>
-            <span className="text-gray-700">Google</span>
+            Google
           </Button>
         </div>
 
         {/* Divider */}
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-gray-300" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-gray-50 px-4 text-gray-500">Or</span>
-          </div>
+        <div className="text-center">
+          <span className="text-gray-500 text-sm">Or</span>
         </div>
 
         {/* Registration Form */}
@@ -159,7 +150,7 @@ export default function RegisterPage() {
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="h-12 bg-white border-gray-200 placeholder:text-gray-400"
+              className="h-12 bg-gray-50 border-gray-200 placeholder:text-gray-400 text-gray-700"
               required
               disabled={isLoading}
             />
@@ -171,7 +162,7 @@ export default function RegisterPage() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-12 bg-white border-gray-200 placeholder:text-gray-400"
+              className="h-12 bg-gray-50 border-gray-200 placeholder:text-gray-400 text-gray-700"
               required
               disabled={isLoading}
             />
@@ -180,10 +171,10 @@ export default function RegisterPage() {
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
-              placeholder="Password (min 6 characters)"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="h-12 bg-white border-gray-200 placeholder:text-gray-400 pr-12"
+              className="h-12 bg-gray-50 border-gray-200 placeholder:text-gray-400 text-gray-700 pr-12"
               required
               disabled={isLoading}
               minLength={6}
@@ -208,12 +199,12 @@ export default function RegisterPage() {
               disabled={isLoading}
             />
             <label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed">
-              I agree to the{" "}
+              I'm agree to The{" "}
               <Link href="/terms" className="text-[#4355B9] hover:underline">
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="text-[#4355B9] hover:underline">
+              <Link href="https://calendarix.pro/policy/" className="text-[#4355B9] hover:underline">
                 Privacy Policy
               </Link>
             </label>
@@ -228,7 +219,7 @@ export default function RegisterPage() {
             {isLoading ? (
               <div className="flex items-center">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                CREATING ACCOUNT...
+                CREATING...
               </div>
             ) : (
               "CREATE ACCOUNT"
@@ -238,8 +229,8 @@ export default function RegisterPage() {
 
         {/* Sign In Link */}
         <div className="text-center">
-          <span className="text-gray-600">Already have an account? </span>
-          <Link href="/auth/login" className="text-[#4355B9] hover:underline font-medium">
+          <span className="text-gray-600 text-sm">Do you have account? </span>
+          <Link href="/auth/login" className="text-[#4355B9] hover:underline font-medium text-sm">
             Sign In
           </Link>
         </div>

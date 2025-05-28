@@ -9,7 +9,7 @@ import {
   subscribeToPushNotifications,
   unsubscribeFromPushNotifications,
   getCurrentPushSubscription
-} from "../../../lib/services/notification-service";
+} from "../../lib/services/notification-service";
 
 // Define a proper type for the BeforeInstallPromptEvent
 interface BeforeInstallPromptEvent extends Event {
@@ -212,7 +212,7 @@ const ServiceWorkerRegistration = () => {
                     </span>
                   </p>
                 </div>
-                <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
+                <div className="order-3 mt-2 shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
                   <button
                     onClick={handleInstallClick}
                     className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-white hover:bg-indigo-50"
@@ -220,7 +220,7 @@ const ServiceWorkerRegistration = () => {
                     Install now
                   </button>
                 </div>
-                <div className="order-2 flex-shrink-0 sm:order-3 sm:ml-2">
+                <div className="order-2 shrink-0 sm:order-3 sm:ml-2">
                   <button
                     type="button"
                     onClick={handleDismissInstall}
@@ -281,7 +281,7 @@ const ServiceWorkerRegistration = () => {
                     </span>
                   </p>
                 </div>
-                <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
+                <div className="order-3 mt-2 shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
                   <button
                     onClick={handleRequestNotificationPermission}
                     className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-blue-50"
@@ -289,7 +289,7 @@ const ServiceWorkerRegistration = () => {
                     Enable notifications
                   </button>
                 </div>
-                <div className="order-2 flex-shrink-0 sm:order-3 sm:ml-2">
+                <div className="order-2 shrink-0 sm:order-3 sm:ml-2">
                   <button
                     type="button"
                     onClick={handleDismissNotificationPrompt}

@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 const ServiceWorkerRegistration = dynamic(
-    () => import("./components/pwa/ServiceWorkerRegistration"),
+    () => import("../components/pwa/ServiceWorkerRegistration"),
     { ssr: false }
 );
 

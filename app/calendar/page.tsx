@@ -18,7 +18,7 @@ import {
   createEvent,
   updateEvent,
   deleteEvent,
-  LocalEvent
+  type LocalEvent,
 } from "@/lib/services/calendar-service"
 import { formatEventFromAPI } from "@/lib/utils"
 import { cn } from "@/lib/utils"
@@ -29,6 +29,7 @@ interface CalendarEvent {
   start: Date
   end?: Date
   description?: string
+  color?: string
 }
 
 export default function CalendarPage() {
@@ -38,9 +39,7 @@ export default function CalendarPage() {
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null)
   const [calendarId, setCalendarId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isOnline, setIsOnline] = useState<boolean>(
-    typeof navigator !== "undefined" ? navigator.onLine : true
-  )
+  const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== "undefined" ? navigator.onLine : true)
 
   // Form state
   const [eventName, setEventName] = useState("")
@@ -227,9 +226,7 @@ export default function CalendarPage() {
           const formattedEvent = formatEventFromAPI(updatedEvent)
 
           // Update local state
-          setEvents(prev => prev.map(event =>
-            event.id === editingEvent.id ? formattedEvent : event
-          ))
+          setEvents((prev) => prev.map((event) => (event.id === editingEvent.id ? formattedEvent : event)))
 
           toast.success("Event updated successfully")
         } else {
@@ -238,7 +235,7 @@ export default function CalendarPage() {
           const formattedEvent = formatEventFromAPI(newEvent)
 
           // Add to local state
-          setEvents(prev => [...prev, formattedEvent])
+          setEvents((prev) => [...prev, formattedEvent])
 
           toast.success("Event created successfully")
         }
@@ -267,7 +264,7 @@ export default function CalendarPage() {
   const handleDeleteEvent = async (eventId: string) => {
     try {
       await deleteEvent(eventId)
-      setEvents(prev => prev.filter(event => event.id !== eventId))
+      setEvents((prev) => prev.filter((event) => event.id !== eventId))
       toast.success("Event deleted successfully")
     } catch (error) {
       console.error("Error deleting event:", error)
@@ -323,6 +320,11 @@ export default function CalendarPage() {
     )
   })
 
+  const getEventColor = (index: number) => {
+    const colors = ["bg-green-500", "bg-blue-500", "bg-purple-500", "bg-orange-500", "bg-pink-500"]
+    return colors[index % colors.length]
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-white pb-16">
       {/* Network Status Indicator */}
@@ -334,15 +336,21 @@ export default function CalendarPage() {
 
       {/* Calendar Header */}
       <div className="p-4 flex items-center justify-between">
-        <button onClick={() => navigateMonth("prev")}>
-          <ChevronLeft className="h-6 w-6 text-gray-600" />
+        <button
+          onClick={() => navigateMonth("prev")}
+          className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center"
+        >
+          <ChevronLeft className="h-5 w-5 text-gray-600" />
         </button>
         <div className="text-center">
-          <h1 className="text-xl font-medium">{monthNames[currentDate.getMonth()]}</h1>
+          <h1 className="text-xl font-medium text-gray-900">{monthNames[currentDate.getMonth()]}</h1>
           <p className="text-sm text-gray-500">{currentDate.getFullYear()}</p>
         </div>
-        <button onClick={() => navigateMonth("next")}>
-          <ChevronRight className="h-6 w-6 text-gray-600" />
+        <button
+          onClick={() => navigateMonth("next")}
+          className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center"
+        >
+          <ChevronRight className="h-5 w-5 text-gray-600" />
         </button>
       </div>
 
@@ -351,7 +359,7 @@ export default function CalendarPage() {
         {/* Day headers */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-            <div key={day} className="text-center text-sm text-gray-500 py-2">
+            <div key={day} className="text-center text-sm text-gray-500 py-2 font-medium">
               {day}
             </div>
           ))}
@@ -365,12 +373,12 @@ export default function CalendarPage() {
             const isSelected = day.day === 2 && day.isCurrentMonth // Highlight day 2 as in the image
 
             return (
-              <div key={index} className="relative h-12 flex flex-col items-center justify-center">
+              <div key={index} className="relative h-12 flex flex-col items-center justify-start pt-1">
                 <div
                   className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-sm",
+                    "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
                     day.isCurrentMonth ? "text-gray-900" : "text-gray-400",
-                    isSelected && "bg-[#4355B9] text-white",
+                    isSelected && "bg-[#5C6BC0] text-white",
                     isToday && !isSelected && "bg-gray-200",
                   )}
                 >
@@ -379,15 +387,7 @@ export default function CalendarPage() {
                 {dayEvents.length > 0 && (
                   <div className="flex space-x-1 mt-1">
                     {dayEvents.slice(0, 3).map((_, i) => (
-                      <div
-                        key={i}
-                        className={cn(
-                          "w-1 h-1 rounded-full",
-                          i === 0 && "bg-green-500",
-                          i === 1 && "bg-blue-500",
-                          i === 2 && "bg-purple-500",
-                        )}
-                      />
+                      <div key={i} className={cn("w-1.5 h-1.5 rounded-full", getEventColor(i))} />
                     ))}
                   </div>
                 )}
@@ -398,12 +398,12 @@ export default function CalendarPage() {
       </div>
 
       {/* Add Event Button */}
-      <div className="px-4 mb-4">
+      <div className="px-4 mb-4 flex justify-center">
         <button
-          className="w-full border-2 border-dashed border-gray-300 rounded-lg py-8 flex items-center justify-center"
+          className="w-12 h-12 bg-[#5C6BC0] rounded-full flex items-center justify-center shadow-lg"
           onClick={() => setShowAddEvent(true)}
         >
-          <Plus className="h-6 w-6 text-gray-400" />
+          <Plus className="h-6 w-6 text-white" />
         </button>
       </div>
 
@@ -411,16 +411,16 @@ export default function CalendarPage() {
       <div className="flex-1 px-4">
         {isLoading ? (
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4355B9]"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5C6BC0]"></div>
           </div>
         ) : todayEvents.length > 0 ? (
           <div className="space-y-4">
-            {todayEvents.map((event) => (
+            {todayEvents.map((event, index) => (
               <div key={event.id} className="flex items-start space-x-3">
-                <div className="w-3 h-3 bg-green-500 rounded-full mt-1"></div>
+                <div className={cn("w-3 h-3 rounded-full mt-2", getEventColor(index))}></div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{formatTimeRange(event.start, event.end)}</span>
+                    <span className="text-sm text-gray-500 font-medium">{formatTimeRange(event.start, event.end)}</span>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button className="p-1">
@@ -435,7 +435,7 @@ export default function CalendarPage() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                  <h3 className="font-medium">{event.title}</h3>
+                  <h3 className="font-medium text-gray-900 mt-1">{event.title}</h3>
                   {event.description && <p className="text-sm text-gray-500 mt-1">{event.description}</p>}
                 </div>
               </div>
@@ -448,79 +448,91 @@ export default function CalendarPage() {
 
       {/* Add/Edit Event Sheet */}
       <Sheet open={showAddEvent} onOpenChange={resetForm}>
-        <SheetContent side="bottom" className="h-[80vh] rounded-t-lg">
-          <SheetHeader className="relative">
-            <SheetTitle className="text-center">{editingEvent ? "Edit Event" : "Add New Event"}</SheetTitle>
-            <button className="absolute right-0 top-0" onClick={resetForm}>
-              <X className="h-6 w-6 text-gray-600" />
-            </button>
-          </SheetHeader>
-          <div className="py-6 space-y-4">
-            <div>
-              <Input
-                placeholder="Event name*"
-                value={eventName}
-                onChange={(e) => setEventName(e.target.value)}
-                className="border-gray-300"
-              />
-            </div>
+        <SheetContent side="bottom" className="h-[85vh] rounded-t-xl border-0 p-0">
+          <div className="p-6">
+            <SheetHeader className="relative mb-6">
+              <SheetTitle className="text-center text-xl font-semibold text-gray-900">Add New Event</SheetTitle>
+              <button
+                className="absolute right-0 top-0 w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center"
+                onClick={resetForm}
+              >
+                <X className="h-4 w-4 text-white" />
+              </button>
+            </SheetHeader>
 
-            <div>
-              <Textarea
-                placeholder="Type the note here..."
-                value={eventNote}
-                onChange={(e) => setEventNote(e.target.value)}
-                className="min-h-[80px] border-gray-300"
-              />
-            </div>
+            <div className="space-y-4">
+              <div>
+                <Input
+                  placeholder="Event name*"
+                  value={eventName}
+                  onChange={(e) => setEventName(e.target.value)}
+                  className="border-gray-200 h-12 text-base"
+                />
+              </div>
 
-            <div className="relative">
-              <Input
-                type="date"
-                value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
-                className="border-gray-300 pl-10"
-              />
-              <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            </div>
+              <div>
+                <Textarea
+                  placeholder="Type the note here..."
+                  value={eventNote}
+                  onChange={(e) => setEventNote(e.target.value)}
+                  className="min-h-[100px] border-gray-200 text-base resize-none"
+                />
+              </div>
 
-            <div className="grid grid-cols-2 gap-4">
               <div className="relative">
                 <Input
-                  type="time"
-                  placeholder="Start"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  className="border-gray-300 pl-10"
+                  type="date"
+                  value={eventDate}
+                  onChange={(e) => setEventDate(e.target.value)}
+                  className="border-gray-200 h-12 pl-12 text-base"
+                  placeholder="Date"
                 />
-                <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <CalendarIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               </div>
-              <div className="relative">
-                <Input
-                  type="time"
-                  placeholder="End time"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  className="border-gray-300 pl-10"
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative">
+                  <Input
+                    type="time"
+                    placeholder="Start"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="border-gray-200 h-12 pl-12 text-base"
+                  />
+                  <Clock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                </div>
+                <div className="relative">
+                  <Input
+                    type="time"
+                    placeholder="End time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="border-gray-200 h-12 pl-12 text-base"
+                  />
+                  <Clock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between py-2">
+                <Label htmlFor="reminds-me" className="text-base font-medium text-gray-700">
+                  Reminds me
+                </Label>
+                <Switch
+                  id="reminds-me"
+                  checked={remindsMe}
+                  onCheckedChange={setRemindsMe}
+                  className="data-[state=checked]:bg-[#5C6BC0]"
                 />
-                <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               </div>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <Label htmlFor="reminds-me" className="text-gray-700">
-                Reminds me
-              </Label>
-              <Switch id="reminds-me" checked={remindsMe} onCheckedChange={setRemindsMe} />
+              <Button
+                className="w-full bg-[#5C6BC0] hover:bg-[#4A5AB0] h-14 text-base font-semibold mt-8"
+                onClick={handleCreateEvent}
+                disabled={!eventName}
+              >
+                CREATE EVENT
+              </Button>
             </div>
-
-            <Button
-              className="w-full bg-[#4355B9] hover:bg-[#3A4A9F] py-6 mt-6"
-              onClick={handleCreateEvent}
-              disabled={!eventName || !eventDate || !startTime}
-            >
-              {editingEvent ? "UPDATE EVENT" : "CREATE EVENT"}
-            </Button>
           </div>
         </SheetContent>
       </Sheet>

@@ -1,13 +1,5 @@
-import { apiRequest } from "../api-client"
-
-interface ProfileUpdate {
-  username?: string
-  phone?: string
-  fullName?: string
-  nickName?: string
-  country?: string
-  gender?: string
-}
+import { userAPI, APIRequestError } from "../api-client"
+import type { ProfileUpdate } from "../types/api"
 
 interface User {
   id: number
@@ -23,10 +15,6 @@ interface User {
   created_at: string
   updated_at?: string
   avatar?: string
-}
-
-interface ApiKeyResponse {
-  api_key: string
 }
 
 // Check if we're in a preview/demo environment
@@ -54,63 +42,44 @@ function getStoredUserInfo(): Partial<User> | null {
 }
 
 export async function getCurrentUser(): Promise<User> {
-  // If in preview environment, return mock data
-  if (isPreviewEnvironment()) {
-    // Check if we have stored user info first
-    const storedInfo = getStoredUserInfo()
-
-    // Return mock or stored user data
-    return {
-      id: 1,
-      username: storedInfo?.username || "Puerto Rico",
-      email: storedInfo?.email || "youremail@domain.com",
-      fullName: storedInfo?.fullName || "Puerto Rico",
-      nickName: storedInfo?.nickName || "puerto_rico",
-      country: storedInfo?.country || "USA",
-      gender: storedInfo?.gender || "Female",
-      is_active: true,
-      is_admin: false,
-      created_at: storedInfo?.created_at || new Date().toISOString(),
-      avatar: "/avatar.png",
-    }
-  }
-
-  // Try to get from API
   try {
-    return await apiRequest<User>({
-      method: "GET",
-      path: "/v1/user/me",
-      requiresAuth: true,
-    })
+    const userData = await userAPI.getCurrentUser()
+    return userData
   } catch (error) {
-    // If API fails, try to get from localStorage
-    const storedProfile = localStorage.getItem("userProfile")
-    if (storedProfile) {
-      const profile = JSON.parse(storedProfile)
-      return {
-        id: 0,
-        username: profile.fullName || "Puerto Rico",
-        email: profile.email || "youremail@domain.com",
-        fullName: profile.fullName || "Puerto Rico",
-        nickName: profile.nickName || "puerto_rico",
-        country: profile.country || "USA",
-        gender: profile.gender || "Female",
-        is_active: true,
-        is_admin: false,
-        created_at: new Date().toISOString(),
-        avatar: "/avatar.png",
+    if (error instanceof APIRequestError) {
+      console.error("API Error:", error.detail)
+
+      // If API fails, try to get from localStorage
+      const storedProfile = localStorage.getItem("userProfile")
+      const storedInfo = getStoredUserInfo()
+
+      if (storedProfile || storedInfo) {
+        const profile = storedProfile ? JSON.parse(storedProfile) : {}
+        return {
+          id: 0,
+          username: profile.fullName || storedInfo?.username || "Demo User",
+          email: profile.email || storedInfo?.email || "demo@example.com",
+          fullName: profile.fullName || storedInfo?.username || "Demo User",
+          nickName: profile.nickName || storedInfo?.username?.toLowerCase() || "demo_user",
+          country: profile.country || "USA",
+          gender: profile.gender || "Other",
+          is_active: true,
+          is_admin: false,
+          created_at: storedInfo?.created_at || new Date().toISOString(),
+          avatar: "/avatar.png",
+        }
       }
     }
 
-    // Default profile if nothing is found
+    // Default profile if everything fails
     return {
       id: 0,
-      username: "Puerto Rico",
-      email: "youremail@domain.com",
-      fullName: "Puerto Rico",
-      nickName: "puerto_rico",
+      username: "Demo User",
+      email: "demo@example.com",
+      fullName: "Demo User",
+      nickName: "demo_user",
       country: "USA",
-      gender: "Female",
+      gender: "Other",
       is_active: true,
       is_admin: false,
       created_at: new Date().toISOString(),
@@ -120,79 +89,52 @@ export async function getCurrentUser(): Promise<User> {
 }
 
 export async function updateProfile(data: ProfileUpdate): Promise<User> {
-  // If in preview environment, update stored user info
-  if (isPreviewEnvironment()) {
-    const currentUser = await getCurrentUser()
-    const updatedUser = { ...currentUser, ...data }
-
-    // Store updated info
-    localStorage.setItem(
-      "userInfo",
-      JSON.stringify({
-        username: updatedUser.username,
-        email: updatedUser.email,
-        fullName: updatedUser.fullName,
-        nickName: updatedUser.nickName,
-        country: updatedUser.country,
-        gender: updatedUser.gender,
-        created_at: updatedUser.created_at,
-      }),
-    )
-
-    return updatedUser
-  }
-
   try {
-    return await apiRequest<User>({
-      method: "PUT",
-      path: "/v1/user/profile",
-      body: data,
-      requiresAuth: true,
-    })
+    const updatedUser = await userAPI.updateProfile(data)
+    return updatedUser
   } catch (error) {
-    // If API fails, update in localStorage
-    const currentProfile = await getCurrentUser()
-    const updatedProfile = { ...currentProfile, ...data }
+    if (error instanceof APIRequestError) {
+      console.error("API Error:", error.detail)
 
-    localStorage.setItem(
-      "userProfile",
-      JSON.stringify({
-        fullName: updatedProfile.fullName || updatedProfile.username,
-        nickName: updatedProfile.nickName || updatedProfile.username?.toLowerCase(),
-        email: updatedProfile.email,
-        country: updatedProfile.country,
-        gender: updatedProfile.gender,
-      }),
-    )
+      // If API fails, update in localStorage
+      const currentUser = await getCurrentUser()
+      const updatedUser = { ...currentUser, ...data }
 
-    return updatedProfile
+      localStorage.setItem(
+        "userProfile",
+        JSON.stringify({
+          fullName: updatedUser.fullName || updatedUser.username,
+          nickName: updatedUser.nickName || updatedUser.username?.toLowerCase(),
+          email: updatedUser.email,
+          country: updatedUser.country,
+          gender: updatedUser.gender,
+        }),
+      )
+
+      return updatedUser
+    }
+    throw error
   }
 }
 
 export async function deactivateAccount(): Promise<{ message: string }> {
-  if (isPreviewEnvironment()) {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    return { message: "Account deactivated successfully (mock)" }
+  try {
+    return await userAPI.deactivateAccount()
+  } catch (error) {
+    if (error instanceof APIRequestError) {
+      throw new Error(error.detail)
+    }
+    throw error
   }
-
-  return apiRequest<{ message: string }>({
-    method: "POST",
-    path: "/v1/user/deactivate",
-    requiresAuth: true,
-  })
 }
 
-export async function generateApiKey(): Promise<ApiKeyResponse> {
-  if (isPreviewEnvironment()) {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    return { api_key: "mock_api_key_" + Date.now() }
+export async function generateApiKey(): Promise<{ api_key: string }> {
+  try {
+    return await userAPI.generateApiKey()
+  } catch (error) {
+    if (error instanceof APIRequestError) {
+      throw new Error(error.detail)
+    }
+    throw error
   }
-
-  return apiRequest<ApiKeyResponse>({
-    method: "POST",
-    path: "/v1/user/generate-api-key",
-    requiresAuth: true,
-  })
 }

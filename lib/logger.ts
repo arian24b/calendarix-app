@@ -1,77 +1,71 @@
-import { format } from "date-fns";
-import type { NextApiRequest } from "next";
-
-type LogLevel = "info" | "warn" | "error";
-type ErrorContext = {
-  path?: string;
-  method?: string;
-  userAgent?: string;
-  ip?: string;
-  userId?: string;
-};
+type LogLevel = "info" | "warn" | "error" | "debug"
 
 interface LogEntry {
-  timestamp: string;
-  level: LogLevel;
-  message: string;
-  context?: ErrorContext;
-  error?: any;
-  stack?: string;
+  timestamp: string
+  level: LogLevel
+  message: string
+  context?: any
 }
 
 class Logger {
+  private isDevelopment = process.env.NODE_ENV === "development"
+
   private formatTimestamp(): string {
-    return format(new Date(), "yyyy-MM-dd HH:mm:ss");
+    return new Date().toISOString().replace("T", " ").substring(0, 19)
   }
 
-  private log(
-    level: LogLevel,
-    message: string,
-    context?: ErrorContext,
-    error?: any
-  ) {
-    const entry: LogEntry = {
+  private createLogEntry(level: LogLevel, message: string, context?: any): LogEntry {
+    return {
       timestamp: this.formatTimestamp(),
       level,
       message,
-      context,
-      error: error?.message || error,
-      stack: error?.stack,
-    };
-
-    const color = {
-      info: "\x1b[36m", // Cyan
-      warn: "\x1b[33m", // Yellow
-      error: "\x1b[31m", // Red
-    }[level];
-
-    console[level](`${color}%s\x1b[0m`, JSON.stringify(entry, null, 2));
+      context: context || {},
+    }
   }
 
-  info(message: string, context?: ErrorContext) {
-    this.log("info", message, context);
+  private output(entry: LogEntry): void {
+    if (typeof window === "undefined") {
+      // Server-side logging
+      console.log(JSON.stringify(entry))
+    } else {
+      // Client-side logging
+      const color = {
+        info: "#2563eb",
+        warn: "#d97706",
+        error: "#dc2626",
+        debug: "#7c3aed",
+      }[entry.level]
+
+      console.log(
+        `%c[${entry.level.toUpperCase()}] ${entry.message}`,
+        `color: ${color}; font-weight: bold;`,
+        entry.context,
+      )
+    }
   }
 
-  warn(message: string, context?: ErrorContext, error?: any) {
-    this.log("warn", message, context, error);
+  info(message: string, context?: any): void {
+    const entry = this.createLogEntry("info", message, context)
+    this.output(entry)
   }
 
-  error(message: string, context?: ErrorContext, error?: any) {
-    this.log("error", message, context, error);
+  warn(message: string, context?: any): void {
+    const entry = this.createLogEntry("warn", message, context)
+    this.output(entry)
   }
 
-  apiError(req: NextApiRequest, error: any) {
-    this.error(
-      "API Error",
-      {
-        path: req.url,
-        method: req.method,
-        userAgent: req.headers["user-agent"],
-        ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress,
-      },
-      error
-    );
+  error(message: string, context?: any): void {
+    const entry = this.createLogEntry("error", message, context)
+    this.output(entry)
+  }
+
+  debug(message: string, context?: any): void {
+    if (this.isDevelopment) {
+      const entry = this.createLogEntry("debug", message, context)
+      this.output(entry)
+    }
   }
 }
 
-export const logger = new Logger();
+export const logger = new Logger()
+export default logger

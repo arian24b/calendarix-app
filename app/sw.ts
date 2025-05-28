@@ -1,161 +1,88 @@
-// Service Worker for PWA
-/// <reference lib="webworker" />
+import { clientsClaim } from "workbox-core"
+import { createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching"
+import { registerRoute } from "workbox-routing"
+import { NetworkFirst } from "workbox-strategies"
 
-import type { PrecacheEntry } from "@serwist/precaching"
-import { installSerwist } from "@serwist/sw"
+declare let self: ServiceWorkerGlobalScope
 
-declare const self: ServiceWorkerGlobalScope & {
-  __SW_MANIFEST: (PrecacheEntry | string)[]
-}
+clientsClaim()
 
-// Handle push notifications
-self.addEventListener('push', (event: PushEvent) => {
-  // Parse the notification data
-  let data;
-  try {
-    data = event.data?.json() ?? {};
-  } catch (error) {
-    // If JSON parsing fails, try to get the text
-    data = {
-      title: 'New Notification',
-      body: event.data?.text() ?? 'You have received a new notification',
-    };
-  }
+precacheAndRoute(self.__WB_MANIFEST)
 
-  const title = data.title || 'Calendarix';
-  const options: NotificationOptions = {
-    body: data.body || 'You have a new notification',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/maskable-icon.png',
-    data: data.data || {},
-    // @ts-expect-error - vibrate is a valid option but TypeScript doesn't recognize it
-    vibrate: [100, 50, 100],
-    // Important for replacing notifications with same tag
-    tag: data.tag || 'default',
-    // Renotify even if there's a notification with same tag
-    renotify: data.renotify || false,
-    actions: data.actions || [
+const fileExtensionRegexp = /\/[^/?]+\.[^/]+$/
+
+registerRoute(
+  ({ request, url }: { request: Request; url: URL }) => {
+    if (request.mode !== "navigate") {
+      return false
+    }
+
+    if (url.pathname.startsWith("/_")) {
+      return false
+    }
+
+    if (url.pathname.match(fileExtensionRegexp)) {
+      return false
+    }
+
+    return true
+  },
+  createHandlerBoundToURL(process.env.PUBLIC_URL + "/index.html"),
+)
+
+registerRoute(
+  /^https:\/\/.*\/v1\//,
+  new NetworkFirst({
+    cacheName: "api-cache-v2",
+    plugins: [
       {
-        action: 'open',
-        title: 'Open App',
+        cacheKeyWillBeUsed: async ({ request }) => {
+          // Create a cache key that includes auth headers for user-specific data
+          const url = new URL(request.url)
+          return `${url.pathname}${url.search}`
+        },
       },
-      {
-        action: 'dismiss',
-        title: 'Dismiss',
-      }
     ],
-    // Show notification with sound on Android
-    silent: data.silent || false,
-    // When notification was received (if not provided, use current time)
-    timestamp: data.timestamp || Date.now(),
-    // Persistent notification that requires interaction to dismiss
-    requireInteraction: data.requireInteraction || false,
-  };
-
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
-});
-
-// Handle notification click events
-self.addEventListener('notificationclick', (event: NotificationEvent) => {
-  event.notification.close();
-
-  // This looks to see if the current is already open and focuses if it is
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window' }).then((clientList: readonly WindowClient[]) => {
-      // Check if there's already a window/tab open with the target URL
-      for (const client of clientList) {
-        // If a matching window exists, focus it
-        if ('focus' in client) return client.focus();
-      }
-      // If no matching window exists, open one
-      if (self.clients.openWindow) {
-        const url = event.notification.data?.url || '/';
-        return self.clients.openWindow(url);
-      }
-      return Promise.resolve();
-    })
-  );
-});
-
-const defaultCache = {
-  matcher: ({ request }: { request: Request }) => request.destination === 'style' ||
-    request.destination === 'script' ||
-    request.destination === 'worker',
-  handler: "StaleWhileRevalidate",
-  options: {
-    cacheName: "default-cache",
-    expiration: {
-      maxEntries: 100,
-      maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+    networkTimeoutSeconds: 10,
+    cacheOptions: {
+      maxEntries: 200,
+      maxAgeSeconds: 24 * 60 * 60, // 24 hours
     },
-  },
-};
+  }),
+)
 
-installSerwist({
-  precacheEntries: self.__SW_MANIFEST,
-  skipWaiting: true,
-  clientsClaim: true,
-  navigationPreload: true,
-  fallbacks: {
-    // Define an offline fallback for HTML documents
-    entries: [
-      {
-        // This fallback will be used for all navigation requests when offline
-        url: "/offline",
-        revision: "offline",
-        matcher: ({ request }: { request: Request }) => request.mode === "navigate"
-      }
-    ]
-  },
-  runtimeCaching: [
-    // Cache images
-    {
-      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
-      handler: "CacheFirst",
-      options: {
-        cacheName: "images",
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
-      },
-    },
-    // Cache API responses
-    {
-      urlPattern: /\/v1\/(?!OAuth)/i, // Cache API responses except auth endpoints
-      handler: "NetworkFirst",
-      options: {
-        cacheName: "api-cache",
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 24 * 60 * 60, // 24 hours
-        },
-        networkTimeoutSeconds: 10,
-      },
-    },
-    // Cache fonts
-    {
-      urlPattern: /\.(?:woff|woff2|ttf|eot)$/i,
-      handler: "CacheFirst",
-      options: {
-        cacheName: "fonts",
-        expiration: {
-          maxEntries: 20,
-          maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-        },
-      },
-    },
-    // Cache CSS/JS
-    {
-      urlPattern: /\.(?:js|css)$/i,
-      handler: "StaleWhileRevalidate",
-      options: {
-        cacheName: "static-resources",
-      },
-    },
-    // Cache static assets
-    defaultCache,
-  ],
+self.addEventListener("fetch", (event) => {
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      (async () => {
+        try {
+          // First, try to use the navigation preload response if it's supported.
+          const preloadResponse = await event.preloadResponse
+          if (preloadResponse) {
+            return preloadResponse
+          }
+
+          // Always try the network first.
+          const networkResponse = await fetch(event.request)
+          return networkResponse
+        } catch (error) {
+          // catch is only triggered if an exception is thrown, which is likely
+          // due to a network error.
+          // If fetch() throws, check to see if we have a cached version
+          // available.
+          return caches.match(event.request)
+        }
+      })(),
+    )
+  }
+})
+
+self.addEventListener("install", (event) => {
+  // @ts-ignore
+  event.waitUntil(self.skipWaiting())
+})
+
+self.addEventListener("activate", (event) => {
+  // @ts-ignore
+  event.waitUntil(self.clients.claim())
 })

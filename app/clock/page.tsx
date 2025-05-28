@@ -4,40 +4,48 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Plus, Sun } from "lucide-react"
-import { BottomNav } from "@/components/bottom-nav"
-import { getAlarms, toggleAlarm, type Alarm } from "@/lib/services/alarm-service"
+import { Plus, Moon } from "lucide-react"
+import Link from "next/link"
+import { getAlarms } from "@/lib/services/alarm-service"
 
 export default function ClockPage() {
   const router = useRouter()
-  const [alarms, setAlarms] = useState<Alarm[]>([])
-  const [showSmartClock, setShowSmartClock] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const [smartClockEnabled, setSmartClockEnabled] = useState(false)
+  const [alarms, setAlarms] = useState([])
 
   useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+
     const loadedAlarms = getAlarms()
     if (loadedAlarms.length === 0) {
       // Set default alarms if none exist
-      const defaultAlarms: Alarm[] = [
+      const defaultAlarms = [
         {
           id: "1",
-          time: "6 : 00 AM",
+          time: "6:00 AM",
           label: "breakfast time!",
-          isActive: true,
-          days: ["Tomorrow-Thu,Sep 2"],
+          date: "Tomorrow-Thu,Sep 2",
+          enabled: true,
+          category: "Sleep",
         },
         {
           id: "2",
-          time: "6 : 00 AM",
+          time: "6:00 AM",
           label: "breakfast time!",
-          isActive: true,
-          days: ["Tomorrow-Thu,Sep 2"],
+          date: "Tomorrow-Thu,Sep 2",
+          enabled: true,
+          category: "Sleep",
         },
         {
           id: "3",
-          time: "6 : 00 AM",
+          time: "6:00 AM",
           label: "breakfast time!",
-          isActive: true,
-          days: ["Tomorrow-Thu,Sep 2"],
+          date: "Tomorrow-Thu,Sep 2",
+          enabled: true,
+          category: "Sleep",
         },
       ]
       localStorage.setItem("alarms", JSON.stringify(defaultAlarms))
@@ -45,102 +53,114 @@ export default function ClockPage() {
     } else {
       setAlarms(loadedAlarms)
     }
+
+    return () => clearInterval(timer)
   }, [])
 
-  const handleToggleAlarm = (id: string) => {
-    const updatedAlarms = toggleAlarm(id)
-    setAlarms(updatedAlarms)
-  }
-
-  const calculateTimeUntilAlarm = () => {
+  const getTimeUntilAlarm = () => {
     const now = new Date()
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
     tomorrow.setHours(6, 0, 0, 0)
 
-    const timeDiff = tomorrow.getTime() - now.getTime()
-    const hours = Math.floor(timeDiff / (1000 * 60 * 60))
-    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60))
+    const diff = tomorrow.getTime() - now.getTime()
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
 
     return `${hours} hours ${minutes} minutes`
   }
 
+  const toggleAlarm = (id) => {
+    setAlarms((prev) => prev.map((alarm) => (alarm.id === id ? { ...alarm, enabled: !alarm.enabled } : alarm)))
+  }
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 pb-16">
-      <div className="p-4 border-b bg-white">
-        <div className="flex items-center mb-2">
-          <Sun className="h-5 w-5 text-yellow-500 mr-2" />
-          <span className="text-sm text-gray-500">Good Morning</span>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white px-4 py-3 flex items-center justify-between border-b">
+        <div className="flex items-center gap-3">
+          <button onClick={() => router.back()}>
+            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+              <span className="text-gray-600">←</span>
+            </div>
+          </button>
+          <div>
+            <div className="text-sm text-gray-500">Good Morning 👋</div>
+            <div className="font-medium text-gray-900">Ready to unlock your perfect sleep schedule?</div>
+          </div>
         </div>
-        <h1 className="text-2xl font-semibold">Set Your Alarm</h1>
-        <p className="text-sm text-gray-500">Let's build your habits</p>
       </div>
 
-      <div className="flex-1 p-4">
-        {showSmartClock && (
-          <div className="mb-6 flex flex-col items-center">
-            <div className="bg-white rounded-lg p-4 w-full max-w-sm text-center mb-4">
-              <p className="text-sm text-gray-600 mb-2">Ready to unlock your perfect sleep schedule?</p>
-              <Button
-                className="bg-[#4355B9] hover:bg-[#3A4A9F] text-white px-8"
-                onClick={() => setShowSmartClock(false)}
-              >
-                SMART CLOCK
-              </Button>
-            </div>
-            <div className="bg-[#4A5568] text-white rounded-lg p-4 w-full max-w-sm text-center mb-4">
-              <p className="text-sm mb-1">Alarm in {calculateTimeUntilAlarm()}</p>
-              <div className="flex items-center justify-center">
-                <Switch checked={true} className="mr-2" />
+      {/* Smart Clock Widget */}
+      {smartClockEnabled && (
+        <div className="mx-4 mt-4 bg-linear-to-r from-slate-700 to-slate-800 rounded-2xl p-4 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm opacity-80">Alarm in {getTimeUntilAlarm()}</div>
+              <div className="flex items-center gap-2 mt-1">
+                <Moon className="w-4 h-4" />
                 <span className="text-sm">Sleep</span>
               </div>
             </div>
+            <Switch
+              checked={smartClockEnabled}
+              onCheckedChange={setSmartClockEnabled}
+              className="data-[state=checked]:bg-blue-500"
+            />
           </div>
-        )}
-
-        <div className="space-y-4">
-          {alarms.map((alarm) => (
-            <div key={alarm.id} className="bg-white rounded-lg p-4 shadow-xs">
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex-1">
-                  <div className="text-2xl font-light text-gray-700">{alarm.time}</div>
-                  <div className="text-sm text-gray-500">{alarm.label}</div>
-                  <div className="text-xs text-[#4355B9] mt-1">{alarm.days.join(", ")}</div>
-                </div>
-                <Switch checked={alarm.isActive} onCheckedChange={() => handleToggleAlarm(alarm.id)} />
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-[#4355B9] rounded-full mr-2"></div>
-                <span className="text-sm text-gray-600">Sleep</span>
-              </div>
-            </div>
-          ))}
         </div>
+      )}
 
-        {!showSmartClock && (
-          <div className="mt-6 text-center">
-            <Button
-              variant="outline"
-              className="text-[#4355B9] border-[#4355B9]"
-              onClick={() => setShowSmartClock(true)}
-            >
-              Show Smart Clock
-            </Button>
+      {/* Smart Clock Button */}
+      {!smartClockEnabled && (
+        <div className="px-4 mt-6">
+          <Button
+            onClick={() => setSmartClockEnabled(true)}
+            className="w-full bg-[#4355B9] hover:bg-[#3A4A9F] text-white py-3 rounded-xl font-medium"
+          >
+            SMART CLOCK
+          </Button>
+        </div>
+      )}
+
+      {/* Add Alarm Button */}
+      <div className="px-4 mt-6 flex justify-end">
+        <Link href="/clock/set">
+          <Button size="lg" className="w-12 h-12 rounded-full bg-[#4355B9] hover:bg-[#3A4A9F] text-white p-0">
+            <Plus className="w-6 h-6" />
+          </Button>
+        </Link>
+      </div>
+
+      {/* Alarms List */}
+      <div className="px-4 mt-4 space-y-3">
+        {alarms.map((alarm) => (
+          <div key={alarm.id} className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl font-light text-gray-900">{alarm.time}</div>
+                  <div className="text-sm text-gray-500">{alarm.date}</div>
+                  <div className="w-2 h-2 bg-[#4355B9] rounded-full"></div>
+                </div>
+                <div className="text-sm text-gray-600 mt-1">{alarm.label}</div>
+                <div className="flex items-center gap-2 mt-2">
+                  <Moon className="w-4 h-4 text-[#4355B9]" />
+                  <span className="text-sm text-[#4355B9]">{alarm.category}</span>
+                </div>
+              </div>
+              <Switch
+                checked={alarm.enabled}
+                onCheckedChange={() => toggleAlarm(alarm.id)}
+                className="data-[state=checked]:bg-[#4355B9]"
+              />
+            </div>
           </div>
-        )}
+        ))}
       </div>
 
-      <div className="fixed bottom-20 right-4">
-        <Button
-          size="icon"
-          className="h-14 w-14 rounded-full bg-[#4355B9] hover:bg-[#3A4A9F] shadow-lg"
-          onClick={() => router.push("/clock/set")}
-        >
-          <Plus className="h-6 w-6" />
-        </Button>
-      </div>
-
-      <BottomNav currentPath="/clock" />
+      {/* Bottom Navigation Spacer */}
+      <div className="h-20"></div>
     </div>
   )
 }
