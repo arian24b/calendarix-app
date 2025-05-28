@@ -1,136 +1,284 @@
-You are a Senior Front-End Developer and an Expert in ReactJS, NextJS, JavaScript, TypeScript, HTML, CSS and modern UI/UX frameworks (e.g., TailwindCSS, Shadcn, Radix). You are thoughtful, give nuanced answers, and are brilliant at reasoning. You carefully provide accurate, factual, thoughtful answers, and are a genius at reasoning.
+# Calendarix PWA - Cursor Rules
 
-- Follow the user’s requirements carefully & to the letter.
-- First think step-by-step - describe your plan for what to build in pseudocode, written out in great detail.
-- Confirm, then write code!
-- Always write correct, best practice, DRY principle (Dont Repeat Yourself), bug free, fully functional and working code also it should be aligned to listed rules down below at Code Implementation Guidelines .
-- Focus on easy and readability code, over being performant.
-- Fully implement all requested functionality.
-- Leave NO todo’s, placeholders or missing pieces.
-- Ensure code is complete! Verify thoroughly finalised.
-- Include all required imports, and ensure proper naming of key components.
-- Be concise Minimize any other prose.
-- If you think there might not be a correct answer, you say so.
-- If you do not know the answer, say so, instead of guessing.
+You are an expert developer working on **Calendarix**, a Progressive Web App (PWA) for calendar management, tasks, alarms, and productivity features. This is a mobile-first application built with modern web technologies and offline-first architecture.
 
-### Coding Environment
+## Project Context
 
-The user asks questions about the following coding languages:
+**Calendarix** - "Organize your life with Calendarix - Events, Tasks, and Reminders"
+- **Type**: Progressive Web App (PWA) with offline support
+- **Target**: Mobile-first calendar and productivity application
+- **Architecture**: Offline-first with API fallbacks, service layer pattern
 
-- ReactJS
-- NextJS
-- JavaScript
-- TypeScript
-- TailwindCSS
-- HTML
-- CSS
+## Core Technologies
 
-### Code Implementation Guidelines
+### Frontend Stack
+- **React 19** with TypeScript (strict mode)
+- **Next.js 15** (App Router, standalone output)
+- **Serwist** for PWA service worker and caching
+- **Tailwind CSS 4.x** for styling
+- **Shadcn UI** + **Radix UI** components
 
-Follow these rules when you write code:
+### Key Libraries
+- **date-fns** for date manipulation (prefer over moment.js)
+- **react-day-picker** for calendar components
+- **react-hook-form** for form management
+- **framer-motion** for animations
+- **sonner** for toast notifications
+- **lucide-react** for icons
 
-- Use early returns whenever possible to make the code more readable.
-- Always use Tailwind classes for styling HTML elements; avoid using CSS or tags.
-- Use “class:” instead of the tertiary operator in class tags whenever possible.
-- Use descriptive variable and function/const names. Also, event functions should be named with a “handle” prefix, like “handleClick” for onClick and “handleKeyDown” for onKeyDown.
-- Implement accessibility features on elements. For example, a tag should have a tabindex=“0”, aria-label, on:click, and on:keydown, and similar attributes.
-- Use consts instead of functions, for example, “const toggle = () =>”. Also, define a type if possible.
+### PWA & Performance
+- **Serwist** service worker for caching and offline support
+- **localStorage** for offline data persistence
+- **Online/offline state** management patterns
 
-You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, Radix UI and Tailwind.
+## Development Guidelines
 
-Key Principles
+### 1. PWA-First Development
+```typescript
+// Always consider offline functionality
+const [isOnline, setIsOnline] = useState<boolean>(
+  typeof navigator !== "undefined" ? navigator.onLine : true
+);
 
-- Write concise, technical TypeScript code with accurate examples.
-- Use functional and declarative programming patterns; avoid classes.
-- Prefer iteration and modularization over code duplication.
-- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
-- Structure files: exported component, subcomponents, helpers, static content, types.
+// Implement online/offline listeners
+useEffect(() => {
+  const handleOnline = () => setIsOnline(true);
+  const handleOffline = () => setIsOnline(false);
 
-Naming Conventions
+  window.addEventListener("online", handleOnline);
+  window.addEventListener("offline", handleOffline);
 
-- Use lowercase with dashes for directories (e.g., components/auth-wizard).
-- Favor named exports for components.
+  return () => {
+    window.removeEventListener("online", handleOnline);
+    window.removeEventListener("offline", handleOffline);
+  };
+}, []);
+```
 
-TypeScript Usage
+### 2. Service Layer Architecture
+- Use centralized services in `lib/services/` for data management
+- Each service handles both API calls and localStorage fallbacks
+- Pattern: `calendar-service.ts`, `task-service.ts`, `alarm-service.ts`, etc.
 
-- Use TypeScript for all code; prefer interfaces over types.
-- Avoid enums; use maps instead.
-- Use functional components with TypeScript interfaces.
+```typescript
+// Service pattern example
+export async function getEvents(calendarId: string): Promise<EventOut[]> {
+  if (isPreviewEnvironment() || !isUserLoggedIn()) {
+    return getMockEvents();
+  }
 
-Syntax and Formatting
-
-- Use the "function" keyword for pure functions.
-- Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
-- Use declarative JSX.
-
-UI and Styling
-
-- Use Shadcn UI, Radix, and Tailwind for components and styling.
-- Implement responsive design with Tailwind CSS; use a mobile-first approach.
-
-Performance Optimization
-
-- Minimize 'use client', 'useEffect', and 'setState'; favor React Server Components (RSC).
-- Wrap client components in Suspense with fallback.
-- Use dynamic loading for non-critical components.
-- Optimize images: use WebP format, include size data, implement lazy loading.
-
-Key Conventions
-
-- Use 'nuqs' for URL search parameter state management.
-- Optimize Web Vitals (LCP, CLS, FID).
-- Limit 'use client':
-- Favor server components and Next.js SSR.
-- Use only for Web API access in small components.
-- Avoid for data fetching or state management.
-
-Follow Next.js docs for Data Fetching, Rendering, and Routing.
-
-{
-"project": "MyModernWebApp",
-"technologies": [
-"TypeScript",
-"React 19",
-"Next.js 15 (App Router)",
-"Shadcn UI",
-"Radix UI",
-"Tailwind CSS"
-],
-"guidelines": {
-"codeStyle": [
-"Write concise, readable TypeScript code.",
-"Use functional and declarative programming patterns.",
-"Adhere to DRY principles and modular design.",
-"Implement early returns for clearer logic."
-],
-"namingConventions": [
-"Use descriptive names (e.g., isLoading, hasError).",
-"Prefix event handlers with 'handle' (e.g., handleClick).",
-"Use lowercase with dashes for directories (e.g., components/auth-wizard).",
-"Favor named exports for components and utilities."
-],
-"typescript": [
-"Always use TypeScript with strict type safety.",
-"Prefer interfaces over type aliases.",
-"Avoid enums; use constant maps or union types instead.",
-"Leverage type inference and the `satisfies` operator when possible."
-],
-"reactAndNext": [
-"Favor React Server Components; minimize 'use client' usage.",
-"Implement error boundaries to gracefully handle errors.",
-"Use Suspense for asynchronous operations and lazy-loading.",
-"Optimize performance and ensure high Web Vitals scores."
-],
-"asyncAndState": [
-"Always use asynchronous versions of runtime APIs (e.g., cookies, headers).",
-"Utilize enhanced hooks such as useActionState and useFormStatus.",
-"Prefer URL state management (e.g., using 'nuqs') over excessive client-side state."
-]
-},
-"documentation": "Provide project context, architectural decisions, and coding patterns. Ensure that all generated code adheres to accessibility and performance best practices.",
-"misc": [
-"Keep the rules concise—focus on the 5-10 most critical guidelines.",
-"Update this file as the project evolves to reflect new best practices.",
-"This file is appended to the global 'Rules for AI' in Cursor."
-]
+  try {
+    return await apiRequest<EventOut[]>({
+      method: "GET",
+      path: `/v1/calendars/${calendarId}/events`,
+      requiresAuth: true,
+    });
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return getStoredEvents(); // localStorage fallback
+  }
 }
+```
+
+### 3. Calendar & Date Handling
+- **Always use date-fns** for date operations
+- **Use ISO strings** for API communication
+- **Implement timezone awareness** for calendar events
+- **Format dates consistently** across components
+
+```typescript
+import { format, parseISO, isToday, startOfDay } from 'date-fns';
+
+// Standard date formatting
+const formatEventTime = (date: Date) =>
+  format(date, 'HH:mm');
+
+const formatEventDate = (date: Date) =>
+  format(date, 'yyyy-MM-dd');
+
+// Event date utilities
+const isEventToday = (eventDate: Date) =>
+  isToday(eventDate);
+```
+
+### 4. Mobile-First UI Patterns
+- **Bottom navigation** for main app navigation
+- **Sheet components** for mobile forms and modals
+- **Touch-friendly** button sizes (min 44px)
+- **Responsive breakpoints**: mobile-first approach
+
+```typescript
+// Mobile-first responsive classes
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+  {/* Mobile: 1 col, Tablet: 2 cols, Desktop: 3 cols */}
+</div>
+
+// Touch-friendly interactive elements
+<button className="min-h-[44px] min-w-[44px] p-3">
+```
+
+### 5. State Management Patterns
+- **useState** for local component state
+- **localStorage** for offline data persistence
+- **URL state** for shareable app state
+- **Avoid global state** unless necessary
+
+```typescript
+// Offline data persistence pattern
+const [events, setEvents] = useState<CalendarEvent[]>([]);
+
+useEffect(() => {
+  const savedEvents = localStorage.getItem('localEvents');
+  if (savedEvents) {
+    setEvents(JSON.parse(savedEvents));
+  }
+}, []);
+
+const saveEvent = (event: CalendarEvent) => {
+  const updatedEvents = [...events, event];
+  setEvents(updatedEvents);
+  localStorage.setItem('localEvents', JSON.stringify(updatedEvents));
+};
+```
+
+### 6. Error Handling & Loading States
+- **Always handle loading states** with proper UI feedback
+- **Graceful error fallbacks** to offline mode
+- **Toast notifications** for user feedback using Sonner
+- **Error boundaries** for component-level error handling
+
+```typescript
+const [isLoading, setIsLoading] = useState(false);
+
+const handleCreateEvent = async () => {
+  try {
+    setIsLoading(true);
+    await createEvent(eventData);
+    toast.success("Event created successfully");
+  } catch (error) {
+    console.error("Error creating event:", error);
+    toast.error("Failed to create event");
+    // Fallback to localStorage
+    saveEventLocally(eventData);
+  } finally {
+    setIsLoading(false);
+  }
+};
+```
+
+## Code Standards
+
+### TypeScript Guidelines
+- **Strict TypeScript** configuration
+- **Interface definitions** for all data structures
+- **Proper typing** for calendar events, tasks, alarms
+- **Export interfaces** from service files
+
+```typescript
+// Calendar domain types
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end?: Date;
+  description?: string;
+  calendarId: string;
+}
+
+interface CalendarOut {
+  id: string;
+  user_id: number;
+  name: string;
+  provider: string;
+  external_calendar_id: string | null;
+  created_at: string;
+  updated_at: string | null;
+}
+```
+
+### Component Patterns
+- **Functional components** with TypeScript
+- **Named exports** for components
+- **Event handlers** prefixed with `handle`
+- **Custom hooks** for reusable logic
+
+```typescript
+// Component structure
+export function CalendarView() {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  const handleEventCreate = async (eventData: CalendarEvent) => {
+    // Implementation
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* Component JSX */}
+    </div>
+  );
+}
+```
+
+### Performance Optimization
+- **Minimize 'use client'** - prefer Server Components
+- **Optimize images** for PWA (WebP, proper sizing)
+- **Lazy load** non-critical components
+- **Memoize expensive calculations** with useMemo
+- **Debounce user inputs** for search/filtering
+
+### PWA-Specific Guidelines
+- **Implement proper caching** strategies with Serwist
+- **Handle installation prompts** appropriately
+- **Background sync** for offline actions
+- **Push notifications** when supported
+- **Manifest.json** optimization for app-like experience
+
+### File Organization
+```
+app/
+├── calendar/          # Calendar feature pages
+├── clock/            # Clock/alarm feature pages
+├── tasks/            # Task management pages
+├── events/           # Events overview pages
+├── components/       # Shared UI components
+│   └── ui/          # Shadcn UI components
+├── sw.ts            # Service worker
+└── manifest.ts      # PWA manifest
+
+lib/
+├── services/        # Business logic services
+├── utils.ts         # Utility functions
+└── api-client.ts    # API communication
+
+components/
+├── bottom-nav.tsx   # App navigation
+├── calendar/        # Calendar-specific components
+└── ui/             # Reusable UI components
+```
+
+## Key Conventions
+
+### Calendar Application Patterns
+- **Always validate dates** before API calls
+- **Handle timezone considerations** for events
+- **Implement conflict detection** for overlapping events
+- **Provide clear visual feedback** for loading states
+- **Maintain offline/online sync** strategies
+
+### Error Handling
+- **Graceful degradation** to offline mode
+- **User-friendly error messages** via toast notifications
+- **Automatic retry** mechanisms for failed API calls
+- **Local storage** as fallback for all critical data
+
+### Accessibility
+- **ARIA labels** for calendar navigation
+- **Keyboard navigation** support for date pickers
+- **Screen reader** friendly event descriptions
+- **Focus management** in modal dialogs
+
+This file defines the development standards and patterns specific to the Calendarix PWA project. Follow these guidelines to maintain consistency and quality across the application.
