@@ -3,34 +3,19 @@
 import { useEffect, useState } from "react"
 import { Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
-import type { Alarm } from "@/types"
+import { getAlarms, type Alarm } from "@/lib/services/alarm-service"
 
 const AlarmsPage = () => {
   const [alarms, setAlarms] = useState<Alarm[]>([])
   const router = useRouter()
-  const { data: session } = useSession()
 
   useEffect(() => {
-    const fetchAlarms = async () => {
-      if (!session?.user?.email) return
-
-      try {
-        const response = await fetch(`/api/alarms?email=${session.user.email}`)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
-        setAlarms(data)
-      } catch (error) {
-        console.error("Could not fetch alarms:", error)
-      }
-    }
-
-    fetchAlarms()
-  }, [session])
+    // Load alarms from localStorage
+    const loadedAlarms = getAlarms()
+    setAlarms(loadedAlarms)
+  }, [])
 
   return (
     <div className="flex flex-col h-full">
@@ -45,7 +30,7 @@ const AlarmsPage = () => {
               className="bg-white rounded-lg p-4 shadow-xs relative group"
               onClick={() => router.push(`/alarms/edit/${alarm.id}`)}
             >
-              <h2 className="text-lg font-semibold">{alarm.name}</h2>
+              <h2 className="text-lg font-semibold">{alarm.label}</h2>
               <p className="text-gray-500">{alarm.time}</p>
               {/* Add more alarm details here */}
             </div>
