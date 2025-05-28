@@ -61,14 +61,15 @@
     "react-hook-form": "latest",
     "react-resizable-panels": "latest",
     "recharts": "latest",
+    "serwist": "^9.0.14",
     "sonner": "latest",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "latest",
-    "workbox-core": "latest",
-    "workbox-precaching": "latest",
-    "workbox-routing": "latest",
-    "workbox-strategies": "latest"
+    "workbox-core": "^7.3.0",
+    "workbox-precaching": "^7.3.0",
+    "workbox-routing": "^7.3.0",
+    "workbox-strategies": "^7.3.0"
   },
   "devDependencies": {
     "@types/node": "22.15.24",
