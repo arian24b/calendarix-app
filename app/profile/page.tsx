@@ -7,14 +7,14 @@ import { Edit2, UserIcon, Lock, Settings, LogOut } from "lucide-react"
 import { BottomNav } from "@/components/bottom-nav"
 import { authService, type User } from "@/lib/services/auth-service"
 import { CalendarIntegration } from "@/components/calendar-integration"
-import { 
-  ActionSheet, 
-  ActionSheetContent, 
-  ActionSheetHeader, 
-  ActionSheetTitle, 
-  ActionSheetItem, 
+import {
+  ActionSheet,
+  ActionSheetContent,
+  ActionSheetHeader,
+  ActionSheetTitle,
+  ActionSheetItem,
   ActionSheetSeparator,
-  ActionSheetTrigger 
+  ActionSheetTrigger
 } from "@/components/ui/action-sheet"
 import { toast } from "sonner"
 
@@ -77,7 +77,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <p className="text-gray-600 mb-4">Unable to load user profile</p>
-          <button 
+          <button
             onClick={() => router.replace("/auth")}
             className="px-4 py-2 bg-primary text-white rounded"
           >

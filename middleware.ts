@@ -18,7 +18,7 @@ const protectedPaths = [
 const authPaths = [
   "/auth",
   "/auth/login",
-  "/auth/register", 
+  "/auth/register",
   "/auth/forgot-password",
   "/auth/reset-password"
 ];

@@ -51,12 +51,12 @@ class AuthService {
 
       // Store token from OAuth response
       localStorage.setItem("token", data.access_token)
-      
+
       // Set cookie for middleware access
       if (typeof document !== "undefined") {
         document.cookie = `token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
       }
-      
+
       // Fetch user data after successful login
       const userData = await this.getCurrentUser(data.access_token)
       localStorage.setItem("user", JSON.stringify(userData))
@@ -126,12 +126,12 @@ class AuthService {
 
       // Store token from OAuth response
       localStorage.setItem("token", data.access_token)
-      
+
       // Set cookie for middleware access
       if (typeof document !== "undefined") {
         document.cookie = `token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
       }
-      
+
       // Fetch user data after successful registration
       const userData = await this.getCurrentUser(data.access_token)
       localStorage.setItem("user", JSON.stringify(userData))
@@ -151,10 +151,10 @@ class AuthService {
       // Clear local storage
       localStorage.removeItem("token")
       localStorage.removeItem("user")
-      
+
       // Clear onboarding status using utility
       clearOnboardingCompleted()
-      
+
       // Clear cookies if they exist
       if (typeof document !== "undefined") {
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -191,9 +191,9 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           token,
-          new_password: newPassword 
+          new_password: newPassword
         }),
       })
 
