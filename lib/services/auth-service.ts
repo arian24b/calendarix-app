@@ -1,5 +1,5 @@
 import { clearOnboardingCompleted } from "@/lib/utils/onboarding"
-import { env } from "@/lib/config"
+import { authAPI, userAPI } from "../api-client"
 
 interface LoginCredentials {
   email: string
@@ -25,30 +25,10 @@ interface AuthResponse {
 }
 
 class AuthService {
-  private baseUrl = env.NEXT_PUBLIC_API_URL
-
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      // OpenAPI expects form-encoded data for OAuth login
-      const formData = new URLSearchParams()
-      formData.append("username", credentials.email)
-      formData.append("password", credentials.password)
-      formData.append("grant_type", "password")
-
-      const response = await fetch(`${this.baseUrl}/v1/OAuth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData,
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || "Login failed")
-      }
-
-      const data = await response.json()
+      // Use the API client which handles proxy and CORS
+      const data = await authAPI.login(credentials.email, credentials.password)
 
       // Store token from OAuth response
       localStorage.setItem("token", data.access_token)
@@ -79,51 +59,48 @@ class AuthService {
         throw new Error("No authentication token")
       }
 
-      const response = await fetch(`${this.baseUrl}/v1/user/me`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-        },
-      })
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Clear invalid token
-          localStorage.removeItem("token")
-          localStorage.removeItem("user")
-          throw new Error("Session expired")
-        }
-        throw new Error("Failed to fetch user data")
+      // Temporarily store the token for the API call if provided
+      const originalToken = localStorage.getItem("token")
+      if (token && token !== originalToken) {
+        localStorage.setItem("token", token)
       }
 
-      return await response.json()
+      try {
+        // Use the API client which handles proxy and CORS
+        const userData = await userAPI.getCurrentUser()
+        return {
+          id: userData.id.toString(),
+          username: userData.username,
+          email: userData.email,
+          avatar: undefined
+        } as User
+      } finally {
+        // Restore the original token if we temporarily changed it
+        if (token && token !== originalToken) {
+          if (originalToken) {
+            localStorage.setItem("token", originalToken)
+          } else {
+            localStorage.removeItem("token")
+          }
+        }
+      }
     } catch (error) {
       console.error("Get current user error:", error)
+      // Clear invalid token on auth errors
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
       throw error
     }
   }
 
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/v1/OAuth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: credentials.username,
-          email: credentials.email,
-          password: credentials.password,
-        }),
+      // Use the API client which handles proxy and CORS
+      const data = await authAPI.register({
+        username: credentials.username,
+        email: credentials.email,
+        password: credentials.password,
       })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || "Registration failed")
-      }
-
-      const data = await response.json()
 
       // Store token from OAuth response
       localStorage.setItem("token", data.access_token)
@@ -167,18 +144,8 @@ class AuthService {
 
   async forgotPassword(email: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/v1/OAuth/reset-password/request`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || "Failed to send reset email")
-      }
+      // Use the API client which handles proxy and CORS
+      await authAPI.requestPasswordReset({ email })
     } catch (error) {
       console.error("Forgot password error:", error)
       throw error
@@ -187,21 +154,11 @@ class AuthService {
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/v1/OAuth/reset-password/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token,
-          new_password: newPassword
-        }),
+      // Use the API client which handles proxy and CORS
+      await authAPI.confirmPasswordReset({
+        token,
+        new_password: newPassword
       })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || "Failed to reset password")
-      }
     } catch (error) {
       console.error("Reset password error:", error)
       throw error

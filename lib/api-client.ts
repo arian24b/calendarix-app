@@ -28,15 +28,18 @@ import type {
 } from "./types/api"
 import { env } from "./config"
 
-const API_BASE_URL = env.NEXT_PUBLIC_API_URL
+// Use proxy for API requests to handle CORS
+const API_BASE_URL = typeof window !== "undefined" && window.location.hostname !== "localhost" 
+  ? "/api/proxy" // Use proxy in production
+  : env.NEXT_PUBLIC_API_URL // Direct to backend in development
 
 interface ApiRequestOptions {
   method: "GET" | "POST" | "PUT" | "DELETE"
   path: string
-  body?: any
+  body?: unknown
   params?: Record<string, string | number | boolean>
   requiresAuth?: boolean
-  contentType?: string
+  contentType?: "application/json" | "application/x-www-form-urlencoded"
 }
 
 // Custom error class for API errors
@@ -63,7 +66,7 @@ function isPreviewEnvironment(): boolean {
 }
 
 // Mock responses for preview environment
-async function getMockResponse<T>(method: string, path: string, body: any): Promise<T> {
+async function getMockResponse<T>(method: string, path: string, body: unknown): Promise<T> {
   console.warn(`Using mock data for ${method} ${path}`)
   await new Promise((resolve) => setTimeout(resolve, 500))
 
@@ -122,13 +125,14 @@ async function getMockResponse<T>(method: string, path: string, body: any): Prom
   }
 
   if (path === "/v1/tasks/" && method === "POST") {
+    const taskBody = body as { title: string; description: string; due_date: string; priority: number };
     return {
       id: "mock_task_" + Date.now(),
       user_id: "1",
-      title: body.title,
-      description: body.description,
-      due_date: body.due_date,
-      priority: body.priority,
+      title: taskBody.title,
+      description: taskBody.description,
+      due_date: taskBody.due_date,
+      priority: taskBody.priority,
       created_at: new Date().toISOString(),
     } as unknown as T
   }
@@ -149,10 +153,11 @@ async function getMockResponse<T>(method: string, path: string, body: any): Prom
   }
 
   if (path === "/v1/calendars/events/list" && method === "POST") {
+    const eventBody = body as { calendar_id: string };
     return [
       {
         id: "mock_event_1",
-        calendar_id: body.calendar_id,
+        calendar_id: eventBody.calendar_id,
         title: "Sample Event",
         start_time: new Date().toISOString(),
         end_time: new Date(Date.now() + 3600000).toISOString(),
@@ -220,7 +225,7 @@ export async function apiRequest<T>({
     if (contentType === "application/json") {
       options.body = JSON.stringify(body)
     } else if (contentType === "application/x-www-form-urlencoded") {
-      options.body = body
+      options.body = body as string
     }
   }
 
@@ -237,7 +242,7 @@ export async function apiRequest<T>({
 
     // Handle response
     const contentTypeHeader = response.headers.get("content-type")
-    let data: any
+    let data: unknown
 
     if (contentTypeHeader && contentTypeHeader.includes("application/json")) {
       data = await response.json()
@@ -247,19 +252,21 @@ export async function apiRequest<T>({
 
     if (!response.ok) {
       // Handle specific error types based on OpenAPI spec
+      const errorData = data as { detail?: string; message?: string }
+      
       if (response.status === 401) {
         if (typeof window !== "undefined") {
           localStorage.removeItem("token")
         }
-        throw new APIRequestError("Unauthorized", 401, data.detail || "Authentication failed")
+        throw new APIRequestError("Unauthorized", 401, errorData.detail || "Authentication failed")
       }
 
       if (response.status === 403) {
-        throw new APIRequestError("Forbidden", 403, data.detail || "Access denied")
+        throw new APIRequestError("Forbidden", 403, errorData.detail || "Access denied")
       }
 
       if (response.status === 404) {
-        throw new APIRequestError("Not Found", 404, data.detail || "Resource not found")
+        throw new APIRequestError("Not Found", 404, errorData.detail || "Resource not found")
       }
 
       if (response.status === 422) {
@@ -270,18 +277,18 @@ export async function apiRequest<T>({
       }
 
       if (response.status === 400) {
-        throw new APIRequestError("Bad Request", 400, data.detail || "Bad request")
+        throw new APIRequestError("Bad Request", 400, errorData.detail || "Bad request")
       }
 
       if (response.status === 500) {
-        throw new APIRequestError("Server Error", 500, data.detail || "Internal server error")
+        throw new APIRequestError("Server Error", 500, errorData.detail || "Internal server error")
       }
 
       // Generic error
       throw new APIRequestError(
         `Request failed with status ${response.status}`,
         response.status,
-        data.detail || data.message || "Unknown error",
+        errorData.detail || errorData.message || "Unknown error",
       )
     }
 
@@ -368,15 +375,15 @@ export const authAPI = {
   },
 
   // OAuth providers
-  async googleLogin(): Promise<any> {
-    return apiRequest<any>({
+  async googleLogin(): Promise<{ auth_url: string }> {
+    return apiRequest<{ auth_url: string }>({
       method: "GET",
       path: "/v1/OAuth/google/login",
     })
   },
 
-  async githubLogin(): Promise<any> {
-    return apiRequest<any>({
+  async githubLogin(): Promise<{ auth_url: string }> {
+    return apiRequest<{ auth_url: string }>({
       method: "GET",
       path: "/v1/OAuth/github/login",
     })
@@ -385,16 +392,16 @@ export const authAPI = {
 
 // User API - Matching OpenAPI spec exactly
 export const userAPI = {
-  async getCurrentUser(): Promise<any> {
-    return apiRequest<any>({
+  async getCurrentUser(): Promise<{ id: number; username: string; email: string; is_active: boolean; is_admin: boolean; created_at: string }> {
+    return apiRequest<{ id: number; username: string; email: string; is_active: boolean; is_admin: boolean; created_at: string }>({
       method: "GET",
       path: "/v1/user/me",
       requiresAuth: true,
     })
   },
 
-  async updateProfile(data: ProfileUpdate): Promise<any> {
-    return apiRequest<any>({
+  async updateProfile(data: ProfileUpdate): Promise<{ id: number; username: string; email: string; is_active: boolean; is_admin: boolean; created_at: string }> {
+    return apiRequest<{ id: number; username: string; email: string; is_active: boolean; is_admin: boolean; created_at: string }>({
       method: "PUT",
       path: "/v1/user/profile",
       body: data,

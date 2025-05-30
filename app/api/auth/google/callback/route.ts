@@ -15,6 +15,8 @@ export async function GET(request: NextRequest) {
   const state = searchParams.get('state');
   const error = searchParams.get('error');
 
+  console.log('Google OAuth callback received:', { code: !!code, state, error });
+
   // Handle OAuth errors
   if (error) {
     console.error('Google OAuth error:', error);
@@ -24,8 +26,13 @@ export async function GET(request: NextRequest) {
   // Handle successful OAuth callback
   if (code) {
     try {
+      console.log('Exchanging code for tokens...');
+      
       // Exchange code for tokens with your backend API
-      const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/v1/OAuth/google/callback`, {
+      const backendUrl = `${env.NEXT_PUBLIC_API_URL}/v1/OAuth/google/callback`;
+      console.log('Making request to:', backendUrl);
+      
+      const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,25 +43,33 @@ export async function GET(request: NextRequest) {
         }),
       });
 
+      console.log('Backend callback response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('Successfully received tokens from backend');
         
         // Create a response that will set the token cookie and redirect
         const redirectResponse = NextResponse.redirect(new URL('/calendar', request.url));
         
         // Set the authentication token as a cookie
-        redirectResponse.cookies.set('token', data.access_token, {
-          httpOnly: true,
-          secure: env.isProduction,
-          sameSite: 'lax',
-          maxAge: 7 * 24 * 60 * 60, // 7 days
-          path: '/',
-        });
+        if (data.access_token) {
+          redirectResponse.cookies.set('token', data.access_token, {
+            httpOnly: true,
+            secure: env.isProduction,
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60, // 7 days
+            path: '/',
+          });
+        }
 
         return redirectResponse;
       } else {
-        const errorData = await response.json();
-        console.error('Backend OAuth error:', errorData);
+        const errorData = await response.text();
+        console.error('Backend OAuth callback error:', {
+          status: response.status,
+          body: errorData
+        });
         return NextResponse.redirect(new URL('/auth?error=backend_error', request.url));
       }
     } catch (error) {
@@ -64,6 +79,7 @@ export async function GET(request: NextRequest) {
   }
 
   // If no code or error, redirect to auth
+  console.log('No code or error in callback, redirecting to auth');
   return NextResponse.redirect(new URL('/auth', request.url));
 }
 
