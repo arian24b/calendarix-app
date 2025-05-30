@@ -1,4 +1,3 @@
-import type { NextConfig } from "next";
 import withSerwistInit from "@serwist/next";
 
 // PWA configuration
@@ -14,7 +13,7 @@ const withPWA = withSerwistInit({
   swUrl: "/sw.js",
 });
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   output: "standalone",
   trailingSlash: true,
   eslint: {
