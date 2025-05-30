@@ -4,4 +4,20 @@ services:
     ports:
       - "127.0.0.1:3109:3000"
     environment:
+      # Production Environment
       - NODE_ENV=production
+
+      # API Configuration
+      - NEXT_PUBLIC_API_BASE_URL=https://api.calendarix.pro
+      - NEXT_PUBLIC_API_URL=https://api.calendarix.pro
+
+      # Application URLs
+      - NEXT_PUBLIC_APP_URL=https://app.calendarix.pro
+      - NEXTAUTH_URL=https://app.calendarix.pro
+
+      # Google OAuth Configuration (replace with actual values from Portainer)
+      - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - NEXT_PUBLIC_GOOGLE_API_KEY=${NEXT_PUBLIC_GOOGLE_API_KEY}
+    env_file:
+      - stack.env
