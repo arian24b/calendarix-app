@@ -49,6 +49,7 @@
     "cmdk": "latest",
     "embla-carousel-react": "latest",
     "eslint-config-next": "^15.3.2",
+    "framer-motion": "^12.15.0",
     "input-otp": "latest",
     "lucide-react": "^0.511.0",
     "next": "^15.3.2",

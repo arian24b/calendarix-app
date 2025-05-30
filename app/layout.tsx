@@ -2,9 +2,9 @@ import type React from "react"
 import type { Metadata, Viewport } from "next/types"
 import config from "@/lib/config"
 import "@/styles/globals.css"
-import ServiceWorkerLoader from "./ServiceWorkerLoader"
+import { ServiceWorkerLoader } from "@/components/service-worker-loader"
 import { Toaster } from "@/components/ui/sonner"
-
+import { AuthGuard } from "@/components/auth-guard"
 
 export const metadata: Metadata = {
   metadataBase: new URL(config.site.url),
@@ -50,13 +50,12 @@ export const metadata: Metadata = {
     creator: config.seo.twitter.handle,
   },
   robots: "index, follow",
-  // Add Apple PWA specific metadata
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: config.site.name,
   },
-};
+}
 
 export const viewport: Viewport = {
   themeColor: [
@@ -69,7 +68,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: "cover",
-};
+}
 
 export default function RootLayout({
   children,
@@ -77,12 +76,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="en"
-      dir="ltr"
-      suppressHydrationWarning
-      className="scroll-smooth"
-    >
+    <html lang="en" dir="ltr" suppressHydrationWarning className="scroll-smooth">
       <head>
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -93,9 +87,11 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png" />
       </head>
       <body className="Inter antialiased ltr">
-        <ServiceWorkerLoader />
-        <Toaster />
-        {children}
+        <AuthGuard>
+          <ServiceWorkerLoader />
+          <Toaster />
+          {children}
+        </AuthGuard>
       </body>
     </html>
   )

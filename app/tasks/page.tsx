@@ -12,15 +12,14 @@ import { BottomNav } from "@/components/bottom-nav"
 import { Plus, Calendar, Clock, Trash2 } from "lucide-react"
 import { getTasks, createTask, updateTask, deleteTask, type TaskOut } from "@/lib/services/task-service"
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+  ActionSheet,
+  ActionSheetContent,
+  ActionSheetHeader,
+  ActionSheetTitle,
+  ActionSheetDescription,
+  ActionSheetItem,
+  ActionSheetSeparator,
+} from "@/components/ui/action-sheet"
 
 export default function TasksPage() {
   const router = useRouter()
@@ -210,7 +209,7 @@ export default function TasksPage() {
   }
 
   const handleLogin = () => {
-    router.push("/auth/login")
+    router.push("/auth")
   }
 
   const formatDate = (dateString: string | null) => {
@@ -376,35 +375,43 @@ export default function TasksPage() {
         </SheetContent>
       </Sheet>
 
-      <AlertDialog open={!!deleteTaskId} onOpenChange={(open) => !open && setDeleteTaskId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Task</AlertDialogTitle>
-            <AlertDialogDescription>
+      <ActionSheet open={!!deleteTaskId} onOpenChange={(open) => !open && setDeleteTaskId(null)}>
+        <ActionSheetContent>
+          <ActionSheetHeader>
+            <ActionSheetTitle>Delete Task</ActionSheetTitle>
+            <ActionSheetDescription>
               Are you sure you want to delete this task? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteTask} className="bg-destructive text-destructive-foreground">
+            </ActionSheetDescription>
+          </ActionSheetHeader>
+          <div className="space-y-0">
+            <ActionSheetItem onClick={() => setDeleteTaskId(null)}>
+              Cancel
+            </ActionSheetItem>
+            <ActionSheetSeparator />
+            <ActionSheetItem destructive onClick={handleDeleteTask}>
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </ActionSheetItem>
+          </div>
+        </ActionSheetContent>
+      </ActionSheet>
 
-      <AlertDialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sign in required</AlertDialogTitle>
-            <AlertDialogDescription>You need to sign in to access premium features.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLogin}>Sign In</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ActionSheet open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
+        <ActionSheetContent>
+          <ActionSheetHeader>
+            <ActionSheetTitle>Sign in required</ActionSheetTitle>
+            <ActionSheetDescription>You need to sign in to access premium features.</ActionSheetDescription>
+          </ActionSheetHeader>
+          <div className="space-y-0">
+            <ActionSheetItem onClick={() => setShowLoginPrompt(false)}>
+              Cancel
+            </ActionSheetItem>
+            <ActionSheetSeparator />
+            <ActionSheetItem onClick={handleLogin}>
+              Sign In
+            </ActionSheetItem>
+          </div>
+        </ActionSheetContent>
+      </ActionSheet>
 
       <BottomNav currentPath="/tasks" />
     </div>

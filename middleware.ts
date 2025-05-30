@@ -1,48 +1,93 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// Define paths that require authentication
+// Protected routes that require authentication
 const protectedPaths = [
-  "/profile"
-]
+  "/profile",
+  "/calendar",
+  "/events",
+  "/tasks",
+  "/alarms",
+  "/categories",
+  "/ai-suggestions",
+  "/add-event",
+  "/add-dietary-event"
+];
+
+// Authentication routes
+const authPaths = [
+  "/auth",
+  "/auth/login",
+  "/auth/register", 
+  "/auth/forgot-password",
+  "/auth/reset-password"
+];
+
+// Public paths that don't require authentication
+const publicPaths = [
+  "/",
+  "/onboarding",
+  "/offline",
+  "/pwa-install"
+];
 
 export function middleware(request: NextRequest) {
-  // Get the path of the request
-  const path = request.nextUrl.pathname
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get("token")?.value ||
+                request.headers.get("authorization")?.replace("Bearer ", "");
 
-  // Check if the path requires authentication
-  const isProtectedPath = protectedPaths.some((protectedPath) =>
-    path === protectedPath || path.startsWith(`${protectedPath}/`)
-  )
+  // Check if the path is protected
+  const isProtectedPath = protectedPaths.some(path =>
+    pathname === path || pathname.startsWith(`${path}/`)
+  );
 
-  // Get the token from cookies
-  const token = request.cookies.get("token")?.value
+  const isAuthPath = authPaths.some(path =>
+    pathname === path || pathname.startsWith(`${path}/`)
+  );
 
-  // If the path requires authentication and there's no token, redirect to login
+  // If user is trying to access protected route without token
   if (isProtectedPath && !token) {
-    const url = new URL("/auth/login", request.url)
-    url.searchParams.set("callbackUrl", request.nextUrl.pathname + request.nextUrl.search)
-    return NextResponse.redirect(url)
+    const loginUrl = new URL("/auth", request.url);
+    loginUrl.searchParams.set("redirectTo", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // If the user is authenticated and trying to access login/register pages, redirect to calendar
-  if (token && path.startsWith("/auth/")) {
-    return NextResponse.redirect(new URL("/calendar", request.url))
+  // If user is authenticated and trying to access auth pages, redirect to calendar
+  if (isAuthPath && token) {
+    return NextResponse.redirect(new URL("/calendar", request.url));
   }
 
-  return NextResponse.next()
+  // Handle root path redirect
+  if (pathname === "/") {
+    const hasCompletedOnboarding = request.cookies.get("hasCompletedOnboarding")?.value;
+
+    if (!hasCompletedOnboarding) {
+      return NextResponse.redirect(new URL("/onboarding", request.url));
+    }
+
+    if (token) {
+      return NextResponse.redirect(new URL("/calendar", request.url));
+    }
+
+    return NextResponse.redirect(new URL("/auth", request.url));
+  }
+
+  return NextResponse.next();
 }
 
-// Configure the middleware to run on specific paths
 export const config = {
   matcher: [
     /*
-     * Match all request paths except:
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public folder
+     * - sw.js (service worker)
+     * - manifest.json (PWA manifest)
+     * - icons/ (PWA icons)
+     * - images/ (static images)
      */
-    "/((?!_next/static|_next/image|favicon.ico|icons|placeholder.svg).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|sw.js|manifest.json|icons|images).*)",
   ],
-}
+};

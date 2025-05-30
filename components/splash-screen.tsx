@@ -21,7 +21,7 @@ export function SplashScreen() {
         } else if (isAuthenticated) {
           router.push("/calendar")
         } else {
-          router.push("/auth/login")
+          router.push("/auth")
         }
       }, 500)
     }, 2500)
