@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { createEvent } from "@/lib/services/calendar-service"
 import { toast } from "sonner"
 
+import { env } from "@/lib/config"
+
 export default function AddEventPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -41,7 +43,7 @@ export default function AddEventPage() {
 
       if (token) {
         // Get the first calendar
-        const calendars = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/calendars/`, {
+        const calendars = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/v1/calendars/`, {
           headers: { Authorization: `Bearer ${token}` },
         }).then((res) => res.json())
 

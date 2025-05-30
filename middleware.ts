@@ -1,5 +1,40 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
+
+// Security headers for the response
+const securityHeaders = {
+  "Content-Security-Policy":
+    "default-src 'self' 'unsafe-inline' data: blob: https://api.calendarix.pro https://accounts.google.com https://apis.google.com;" +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;" +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://api.calendarix.pro https://accounts.google.com;" +
+    "font-src 'self' data: https://fonts.gstatic.com;" +
+    "img-src 'self' data: blob: https://*.googleusercontent.com https://api.calendarix.pro https://*.producthunt.com;" +
+    "worker-src 'self' blob: https://api.calendarix.pro;" +
+    "connect-src 'self' http://127.0.0.1:3000 ws://127.0.0.1:8090 https://api.calendarix.pro http://api.calendarix.pro http://localhost:3000 https://accounts.google.com https://oauth2.googleapis.com;",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+};
+
+// Allowed origins for CORS
+const allowedOrigins = [
+  "https://api.calendarix.pro",
+  "http://api.calendarix.pro",
+  "https://calendarix.pro",
+  "http://calendarix.pro",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://accounts.google.com",
+  "https://oauth2.googleapis.com"
+];
+
+// CORS options
+const corsOptions = {
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+  "Access-Control-Allow-Credentials": "true"
+};
 
 // Protected routes that require authentication
 const protectedPaths = [
@@ -23,16 +58,32 @@ const authPaths = [
   "/auth/reset-password"
 ];
 
-// Public paths that don't require authentication
-const publicPaths = [
-  "/",
-  "/onboarding",
-  "/offline",
-  "/pwa-install"
-];
+function setCORSHeaders(response: NextResponse, origin: string | null) {
+  if (origin && allowedOrigins.includes(origin)) {
+    response.headers.set("Access-Control-Allow-Origin", origin);
+  }
+  Object.entries(corsOptions).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
+}
+
+function setSecurityHeaders(response: NextResponse) {
+  Object.entries(securityHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const origin = request.headers.get("origin");
+  
+  // Handle preflight requests
+  if (request.method === "OPTIONS") {
+    const response = new NextResponse(null, { status: 200 });
+    setCORSHeaders(response, origin);
+    return response;
+  }
+
   const token = request.cookies.get("token")?.value ||
                 request.headers.get("authorization")?.replace("Bearer ", "");
 
@@ -72,7 +123,15 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth", request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  
+  // Set CORS headers if origin is allowed
+  setCORSHeaders(response, origin);
+  
+  // Set security headers
+  setSecurityHeaders(response);
+
+  return response;
 }
 
 export const config = {

@@ -1,4 +1,6 @@
 // Google Calendar Integration Service
+import { googleConfig } from "@/lib/config";
+
 interface GoogleCalendarEvent {
   id: string
   summary: string
@@ -27,10 +29,10 @@ class GoogleCalendarService {
 
   constructor() {
     this.config = {
-      apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "",
-      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
-      discoveryDoc: "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
-      scopes: "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events",
+      apiKey: googleConfig.apiKey,
+      clientId: googleConfig.clientId,
+      discoveryDoc: googleConfig.discoveryDocs[0],
+      scopes: googleConfig.scopes,
     }
   }
 

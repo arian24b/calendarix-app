@@ -1,4 +1,5 @@
 import { clearOnboardingCompleted } from "@/lib/utils/onboarding"
+import { env } from "@/lib/config"
 
 interface LoginCredentials {
   email: string
@@ -24,7 +25,7 @@ interface AuthResponse {
 }
 
 class AuthService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.calendarix.pro"
+  private baseUrl = env.NEXT_PUBLIC_API_URL
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {

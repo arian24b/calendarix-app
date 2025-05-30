@@ -26,8 +26,9 @@ import type {
   HTTPValidationError,
   ApiKeyResponse,
 } from "./types/api"
+import { env } from "./config"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.calendarix.pro"
+const API_BASE_URL = env.NEXT_PUBLIC_API_URL
 
 interface ApiRequestOptions {
   method: "GET" | "POST" | "PUT" | "DELETE"
@@ -57,7 +58,7 @@ function isPreviewEnvironment(): boolean {
     typeof window !== "undefined" &&
     (window.location.hostname.includes("v0.dev") ||
       window.location.hostname === "localhost" ||
-      !process.env.NEXT_PUBLIC_API_URL)
+      !env.NEXT_PUBLIC_API_URL)
   )
 }
 

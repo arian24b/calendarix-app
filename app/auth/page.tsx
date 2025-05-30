@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Eye, EyeOff, Sparkles } from "lucide-react"
 import { authService } from "@/lib/services/auth-service"
+import { googleOAuthService } from "@/lib/services/google-oauth-service"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
 
@@ -28,6 +29,26 @@ export default function AuthPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [agreeToTerms, setAgreeToTerms] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+
+    // Handle OAuth errors from URL params
+    useEffect(() => {
+        const error = searchParams.get('error');
+        if (error) {
+            switch (error) {
+                case 'oauth_error':
+                    toast.error('Google authentication was cancelled or failed');
+                    break;
+                case 'backend_error':
+                    toast.error('Authentication failed. Please try again.');
+                    break;
+                case 'callback_error':
+                    toast.error('Authentication callback failed. Please try again.');
+                    break;
+                default:
+                    toast.error('Authentication error occurred');
+            }
+        }
+    }, [searchParams]);
 
     const toggleMode = () => {
         setIsRegisterMode(!isRegisterMode)
@@ -118,6 +139,18 @@ export default function AuthPage() {
     }
 
     const handleSubmit = isRegisterMode ? handleRegister : handleLogin
+
+    const handleGoogleLogin = async () => {
+        setIsLoading(true);
+        try {
+            // Try backend OAuth flow first
+            await googleOAuthService.signInViaBackend();
+        } catch (error) {
+            console.error('Google login error:', error);
+            toast.error('Failed to initiate Google login. Please try again.');
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -313,6 +346,7 @@ export default function AuthPage() {
                                 variant="outline"
                                 className="w-full h-12 text-base border-gray-200 hover:bg-gray-50"
                                 disabled={isLoading}
+                                onClick={handleGoogleLogin}
                             >
                                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                                     <path

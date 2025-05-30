@@ -5,11 +5,12 @@
  */
 
 import { config } from 'dotenv';
+import { env, googleConfig } from './lib/config';
 config({ path: '.env.local' });
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.calendarix.pro';
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+const API_BASE_URL = env.NEXT_PUBLIC_API_URL;
+const GOOGLE_CLIENT_ID = googleConfig.clientId;
+const GOOGLE_API_KEY = googleConfig.apiKey;
 
 console.log('🧪 Testing Calendarix App Connections\n');
 

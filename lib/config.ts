@@ -6,6 +6,30 @@
  * application-wide settings.
  */
 
+// Environment variables (centralized)
+export const env = {
+  NODE_ENV: process.env.NODE_ENV || "development",
+  // API Configuration
+  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "https://api.calendarix.pro",
+  NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "https://api.calendarix.pro",
+  
+  // Google OAuth Configuration
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+  NEXT_PUBLIC_GOOGLE_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "",
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
+  
+  // Application URLs
+  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  NEXTAUTH_URL: process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  
+  // Feature flags
+  isProduction: process.env.NODE_ENV === "production",
+  isDevelopment: process.env.NODE_ENV === "development",
+  isPreview: !process.env.NEXT_PUBLIC_API_URL || 
+             process.env.NEXT_PUBLIC_API_URL.includes("localhost") ||
+             process.env.NEXT_PUBLIC_API_URL === ""
+};
+
 // Site metadata
 export const siteConfig = {
   name: "CalendarIX - AI-Powered Calendar",
@@ -25,7 +49,7 @@ export const siteConfig = {
 
 // API endpoints and services
 export const apiConfig = {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || "https://api.calendarix.pro",
+  baseUrl: env.NEXT_PUBLIC_API_URL,
   endpoints: {
     blog: "/blog",
     projects: "/projects",
@@ -33,6 +57,28 @@ export const apiConfig = {
     newsletter: "/newsletter",
     auth: "/auth",
   },
+  // OAuth endpoints
+  oauth: {
+    google: {
+      login: "/v1/OAuth/google/login",
+      callback: "/v1/OAuth/google/callback",
+    },
+    github: {
+      login: "/v1/OAuth/github/login",
+      callback: "/v1/OAuth/github/callback",
+    }
+  }
+};
+
+// Google OAuth Configuration
+export const googleConfig = {
+  clientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+  apiKey: env.NEXT_PUBLIC_GOOGLE_API_KEY,
+  clientSecret: env.GOOGLE_CLIENT_SECRET,
+  redirectUri: `${env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`,
+  scope: "openid email profile",
+  discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+  scopes: "https://www.googleapis.com/auth/calendar.readonly"
 };
 
 // Social media links
@@ -84,7 +130,7 @@ export const featureFlags = {
 // Analytics and tracking
 export const analyticsConfig = {
   googleAnalyticsId: "", // e.g. "G-XXXXXXXXXX"
-  enableAnalytics: process.env.NODE_ENV === "production",
+  enableAnalytics: env.isProduction,
 };
 
 // Content delivery
@@ -122,8 +168,10 @@ export const seoConfig = {
 
 // Export a default config object that combines all configurations
 const config = {
+  env,
   site: siteConfig,
   api: apiConfig,
+  google: googleConfig,
   social: socialLinks,
   nav: navLinks,
   features: featureFlags,

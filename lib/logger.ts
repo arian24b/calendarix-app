@@ -1,3 +1,5 @@
+import { env } from "@/lib/config";
+
 type LogLevel = "info" | "warn" | "error" | "debug"
 
 interface LogEntry {
@@ -8,7 +10,7 @@ interface LogEntry {
 }
 
 class Logger {
-  private isDevelopment = process.env.NODE_ENV === "development"
+  private isDevelopment = env.isDevelopment
 
   private formatTimestamp(): string {
     return new Date().toISOString().replace("T", " ").substring(0, 19)

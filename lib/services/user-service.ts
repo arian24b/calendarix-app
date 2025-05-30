@@ -1,5 +1,6 @@
 import { userAPI, APIRequestError } from "../api-client"
 import type { ProfileUpdate } from "../types/api"
+import { env } from "../config"
 
 interface User {
   id: number
@@ -20,8 +21,8 @@ interface User {
 // Check if we're in a preview/demo environment
 function isPreviewEnvironment(): boolean {
   return (
-    !process.env.NEXT_PUBLIC_API_BASE_URL ||
-    process.env.NEXT_PUBLIC_API_BASE_URL.includes("localhost") ||
+    !env.NEXT_PUBLIC_API_BASE_URL ||
+    env.NEXT_PUBLIC_API_BASE_URL.includes("localhost") ||
     (typeof window !== "undefined" && window.location.hostname.includes("v0.dev"))
   )
 }
