@@ -24,23 +24,22 @@ export async function GET(request: NextRequest) {
   }
 
   // Handle successful OAuth callback
-  if (code) {
+  if (code && state) {
     try {
       console.log('Exchanging code for tokens...');
       
-      // Exchange code for tokens with your backend API
-      const backendUrl = `${env.NEXT_PUBLIC_API_URL}/v1/OAuth/google/callback`;
-      console.log('Making request to:', backendUrl);
+      // Construct URL with query parameters as per OpenAPI spec
+      const backendUrl = new URL(`${env.NEXT_PUBLIC_API_URL}/v1/OAuth/google/callback`);
+      backendUrl.searchParams.set('code', code);
+      backendUrl.searchParams.set('state', state);
       
-      const response = await fetch(backendUrl, {
-        method: 'POST',
+      console.log('Making request to:', backendUrl.toString());
+      
+      const response = await fetch(backendUrl.toString(), {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          code,
-          redirect_uri: `${env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`,
-        }),
       });
 
       console.log('Backend callback response status:', response.status);
@@ -78,9 +77,9 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // If no code or error, redirect to auth
-  console.log('No code or error in callback, redirecting to auth');
-  return NextResponse.redirect(new URL('/auth', request.url));
+  // If no code or state, redirect to auth
+  console.log('Missing code or state in callback, redirecting to auth');
+  return NextResponse.redirect(new URL('/auth?error=missing_params', request.url));
 }
 
 export async function POST(request: NextRequest) {
@@ -89,7 +88,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { code } = body;
+    const { code, state } = body;
 
     if (!code) {
       return corsResponse(NextResponse.json(
@@ -98,16 +97,23 @@ export async function POST(request: NextRequest) {
       ));
     }
 
-    // Exchange code for tokens with your backend API
-    const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/v1/OAuth/google/callback`, {
-      method: 'POST',
+    if (!state) {
+      return corsResponse(NextResponse.json(
+        { error: 'State parameter is required' },
+        { status: 400 }
+      ));
+    }
+
+    // Construct URL with query parameters for GET request as per OpenAPI spec
+    const callbackUrl = new URL(`${env.NEXT_PUBLIC_API_URL}/v1/OAuth/google/callback`);
+    callbackUrl.searchParams.set('code', code);
+    callbackUrl.searchParams.set('state', state);
+
+    const response = await fetch(callbackUrl.toString(), {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        code,
-        redirect_uri: `${env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`,
-      }),
     });
 
     if (response.ok) {

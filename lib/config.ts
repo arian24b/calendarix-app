@@ -75,7 +75,7 @@ export const googleConfig = {
   clientId: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
   apiKey: env.NEXT_PUBLIC_GOOGLE_API_KEY,
   clientSecret: env.GOOGLE_CLIENT_SECRET,
-  redirectUri: `${env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`,
+  redirectUri: `${env.NEXT_PUBLIC_API_URL}/v1/OAuth/google/callback`,
   scope: "openid email profile",
   discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
   scopes: "https://www.googleapis.com/auth/calendar.readonly"

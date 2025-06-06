@@ -375,18 +375,14 @@ export const authAPI = {
   },
 
   // OAuth providers
-  async googleLogin(): Promise<{ auth_url: string }> {
-    return apiRequest<{ auth_url: string }>({
-      method: "GET",
-      path: "/v1/OAuth/google/login",
-    })
+  async googleLogin(): Promise<void> {
+    // This endpoint redirects to Google OAuth, so we can't call it directly via fetch
+    throw new Error("Use Google OAuth service signInViaBackend method instead")
   },
 
-  async githubLogin(): Promise<{ auth_url: string }> {
-    return apiRequest<{ auth_url: string }>({
-      method: "GET",
-      path: "/v1/OAuth/github/login",
-    })
+  async githubLogin(): Promise<void> {
+    // This endpoint redirects to GitHub OAuth, so we can't call it directly via fetch
+    throw new Error("Use GitHub OAuth service instead")
   },
 }
 

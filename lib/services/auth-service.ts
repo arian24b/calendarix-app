@@ -28,14 +28,17 @@ class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       // Use the API client which handles proxy and CORS
+      // Note: API expects username but we're using email as username per OpenAPI spec
       const data = await authAPI.login(credentials.email, credentials.password)
 
       // Store token from OAuth response
       localStorage.setItem("token", data.access_token)
 
-      // Set cookie for middleware access
+      // Set cookie for middleware access with proper security
       if (typeof document !== "undefined") {
-        document.cookie = `token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
+        const maxAge = 7 * 24 * 60 * 60; // 7 days
+        const isSecure = window.location.protocol === 'https:';
+        document.cookie = `token=${data.access_token}; path=/; max-age=${maxAge}; ${isSecure ? 'secure;' : ''} samesite=strict`;
       }
 
       // Fetch user data after successful login
@@ -48,6 +51,18 @@ class AuthService {
       }
     } catch (error) {
       console.error("Login error:", error)
+      // Re-throw with more specific error messages based on OpenAPI spec
+      if (error instanceof Error) {
+        if (error.message.includes('Invalid credentials')) {
+          throw new Error('Invalid email or password. Please check your credentials and try again.')
+        }
+        if (error.message.includes('Account locked')) {
+          throw new Error('Account is temporarily locked. Please try again later.')
+        }
+        if (error.message.includes('Validation Error')) {
+          throw new Error('Please provide a valid email and password.')
+        }
+      }
       throw error
     }
   }
@@ -105,9 +120,11 @@ class AuthService {
       // Store token from OAuth response
       localStorage.setItem("token", data.access_token)
 
-      // Set cookie for middleware access
+      // Set cookie for middleware access with proper security
       if (typeof document !== "undefined") {
-        document.cookie = `token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
+        const maxAge = 7 * 24 * 60 * 60; // 7 days
+        const isSecure = window.location.protocol === 'https:';
+        document.cookie = `token=${data.access_token}; path=/; max-age=${maxAge}; ${isSecure ? 'secure;' : ''} samesite=strict`;
       }
 
       // Fetch user data after successful registration
@@ -120,6 +137,30 @@ class AuthService {
       }
     } catch (error) {
       console.error("Registration error:", error)
+      // Re-throw with more specific error messages based on OpenAPI spec
+      if (error instanceof Error) {
+        if (error.message.includes('User already exists')) {
+          throw new Error('An account with this email already exists. Please use a different email or try logging in.')
+        }
+        if (error.message.includes('Password must be at least 8 characters')) {
+          throw new Error('Password must be at least 8 characters long.')
+        }
+        if (error.message.includes('Password must contain an uppercase letter')) {
+          throw new Error('Password must contain at least one uppercase letter.')
+        }
+        if (error.message.includes('Password must contain a lowercase letter')) {
+          throw new Error('Password must contain at least one lowercase letter.')
+        }
+        if (error.message.includes('Password must contain a digit')) {
+          throw new Error('Password must contain at least one number.')
+        }
+        if (error.message.includes('Password must contain a special character')) {
+          throw new Error('Password must contain at least one special character.')
+        }
+        if (error.message.includes('Validation Error')) {
+          throw new Error('Please provide valid registration information.')
+        }
+      }
       throw error
     }
   }
