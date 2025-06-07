@@ -12,12 +12,12 @@ import { toast } from "sonner"
 export function CalendarIntegration() {
     const [isConnected, setIsConnected] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [calendars, setCalendars] = useState<any[]>([])
+    const [calendars, setCalendars] = useState<Array<{ id: string; summary: string; backgroundColor?: string }>>([])
     const [syncEnabled, setSyncEnabled] = useState(false)
 
     useEffect(() => {
         checkConnectionStatus()
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const checkConnectionStatus = async () => {
         try {

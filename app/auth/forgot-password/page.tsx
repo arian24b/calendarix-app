@@ -37,9 +37,10 @@ export default function ForgotPasswordPage() {
       setTimeout(() => {
         router.push("/auth/reset-password")
       }, 2000)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Password reset error:", error)
-      toast.error(error.message || "Failed to send reset email. Please try again.")
+      const errorMessage = error instanceof Error ? error.message : "Failed to send reset email. Please try again."
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

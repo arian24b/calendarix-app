@@ -22,8 +22,6 @@ import {
 } from "@/lib/services/calendar-service"
 import { formatEventFromAPI } from "@/lib/utils"
 import { cn } from "@/lib/utils"
-import { Calendar } from "lucide-react"
-import { CalendarIntegration } from "@/components/calendar-integration"
 
 interface CalendarEvent {
   id: string
@@ -539,7 +537,7 @@ export default function CalendarPage() {
         </SheetContent>
       </Sheet>
 
-      <BottomNav currentPath="/calendar" />
+      <BottomNav />
     </div>
   )
 }

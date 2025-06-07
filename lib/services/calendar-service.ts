@@ -10,14 +10,6 @@ export interface LocalEvent {
   calendar_id: string
 }
 
-// Check if we're in a preview/demo environment
-function isPreviewEnvironment(): boolean {
-  return (
-    typeof window !== "undefined" &&
-    (window.location.hostname.includes("v0.dev") || window.location.hostname.includes("localhost:3000"))
-  )
-}
-
 export async function getCalendars(): Promise<CalendarOut[]> {
   try {
     return await calendarAPI.getCalendars()
@@ -86,7 +78,7 @@ export async function getEvents(calendarId: string): Promise<EventOut[]> {
   }
 }
 
-export async function createEvent(calendarId: string, eventData: any): Promise<EventOut> {
+export async function createEvent(calendarId: string, eventData: EventCreate): Promise<EventOut> {
   try {
     const data: EventCreate = {
       title: eventData.title,
@@ -113,7 +105,7 @@ export async function createEvent(calendarId: string, eventData: any): Promise<E
   }
 }
 
-export async function updateEvent(eventId: string, calendarId: string, eventData: any): Promise<EventOut> {
+export async function updateEvent(eventId: string, calendarId: string, eventData: EventCreate): Promise<EventOut> {
   // Note: Update endpoint not in OpenAPI spec, using create for now
   return createEvent(calendarId, eventData)
 }

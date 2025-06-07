@@ -40,7 +40,7 @@ export default function SetAlarmPage() {
         <div className="text-center">
           <div className="text-sm text-gray-500">Good Morning 👋</div>
           <div className="font-medium text-gray-900">Set Your Alarm</div>
-          <div className="text-xs text-gray-400">Let's build your habits</div>
+          <div className="text-xs text-gray-400">Let&apos;s build your habits</div>
         </div>
         <div className="w-8"></div>
       </div>

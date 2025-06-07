@@ -171,7 +171,7 @@ export default function EditProfilePage() {
         </Button>
       </div>
 
-      <BottomNav currentPath="/profile" />
+      <BottomNav />
     </div>
   )
 }

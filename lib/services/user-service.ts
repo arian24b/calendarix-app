@@ -1,6 +1,5 @@
 import { userAPI, APIRequestError } from "../api-client"
 import type { ProfileUpdate } from "../types/api"
-import { env } from "../config"
 
 interface User {
   id: number
@@ -18,15 +17,6 @@ interface User {
   avatar?: string
 }
 
-// Check if we're in a preview/demo environment
-function isPreviewEnvironment(): boolean {
-  return (
-    !env.NEXT_PUBLIC_API_URL ||
-    env.NEXT_PUBLIC_API_URL.includes("localhost") ||
-    (typeof window !== "undefined" && window.location.hostname.includes("v0.dev"))
-  )
-}
-
 // Get stored user info from localStorage
 function getStoredUserInfo(): Partial<User> | null {
   if (typeof window === "undefined") return null
@@ -35,7 +25,7 @@ function getStoredUserInfo(): Partial<User> | null {
   if (storedInfo) {
     try {
       return JSON.parse(storedInfo)
-    } catch (e) {
+    } catch {
       return null
     }
   }

@@ -27,14 +27,14 @@ export async function GET(request: NextRequest) {
   if (code && state) {
     try {
       console.log('Exchanging code for tokens...');
-      
+
       // Construct URL with query parameters as per OpenAPI spec
       const backendUrl = new URL(`${env.NEXT_PUBLIC_API_URL}/v1/OAuth/google/callback`);
       backendUrl.searchParams.set('code', code);
       backendUrl.searchParams.set('state', state);
-      
+
       console.log('Making request to:', backendUrl.toString());
-      
+
       const response = await fetch(backendUrl.toString(), {
         method: 'GET',
         headers: {
@@ -47,10 +47,10 @@ export async function GET(request: NextRequest) {
       if (response.ok) {
         const data = await response.json();
         console.log('Successfully received tokens from backend');
-        
+
         // Create a response that will set the token cookie and redirect
         const redirectResponse = NextResponse.redirect(new URL('/calendar', request.url));
-        
+
         // Set the authentication token as a cookie
         if (data.access_token) {
           redirectResponse.cookies.set('token', data.access_token, {

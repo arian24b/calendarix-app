@@ -183,7 +183,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <BottomNav currentPath="/profile" />
+      <BottomNav />
     </div>
   )
 }

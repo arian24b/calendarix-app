@@ -10,7 +10,6 @@ interface AuthGuardProps {
 
 const protectedPaths = ["/profile", "/calendar", "/events", "/tasks", "/alarms", "/categories"]
 const authPaths = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password"]
-const publicPaths = ["/", "/onboarding"]
 
 export function AuthGuard({ children }: AuthGuardProps) {
     const router = useRouter()
@@ -24,7 +23,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
             const isProtectedPath = protectedPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`))
             const isAuthPath = authPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`))
-            const isPublicPath = publicPaths.includes(pathname)
 
             // Handle root path
             if (pathname === "/") {

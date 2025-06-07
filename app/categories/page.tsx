@@ -70,7 +70,7 @@ export default function CategoriesPage() {
         </div>
       </div>
 
-      <BottomNav currentPath="/categories" />
+      <BottomNav />
     </div>
   )
 }

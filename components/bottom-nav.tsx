@@ -4,11 +4,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Calendar, Clock, LayoutGrid, FileText, User } from "lucide-react"
 
-interface BottomNavProps {
-  currentPath: string
-}
-
-export function BottomNav({ currentPath }: BottomNavProps) {
+export function BottomNav() {
   const router = useRouter()
   const pathname = usePathname()
 

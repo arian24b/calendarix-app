@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Search, MoreVertical, Circle } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -32,8 +31,6 @@ type AlarmType = {
 type CombinedEvent = EventType | AlarmType
 
 export default function EventsPage() {
-  // Router available for navigation if needed
-  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeFilter, setActiveFilter] = useState<"today" | "week" | "month">("today")
   const [allEvents, setAllEvents] = useState<CombinedEvent[]>([])
@@ -115,13 +112,13 @@ export default function EventsPage() {
     }
 
     fetchEvents()
-  }, [activeFilter, isOnline]) // Re-fetch when coming back online
+  }, [activeFilter, isOnline]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const getMockEvents = (): EventType[] => {
     const savedEvents = localStorage.getItem("localEvents")
     if (savedEvents) {
       try {
-        return JSON.parse(savedEvents).map((event: any) => ({
+        return JSON.parse(savedEvents).map((event: EventType) => ({
           ...event,
           start: new Date(event.start),
           end: event.end ? new Date(event.end) : undefined,
@@ -278,7 +275,7 @@ export default function EventsPage() {
         {!isOnline && (
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-2 mb-4">
             <p className="text-xs text-yellow-700">
-              You're currently offline. Events are loaded from local storage.
+              You&apos;re currently offline. Events are loaded from local storage.
             </p>
           </div>
         )}
@@ -382,7 +379,7 @@ export default function EventsPage() {
         )}
       </div>
 
-      <BottomNav currentPath="/events" />
+      <BottomNav />
     </div>
   )
 }

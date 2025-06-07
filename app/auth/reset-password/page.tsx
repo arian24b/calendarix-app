@@ -80,9 +80,10 @@ export default function ResetPasswordPage() {
       setTimeout(() => {
         router.push("/auth")
       }, 2000)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Password reset error:", error)
-      toast.error(error.message || "Failed to reset password. Please try again.")
+      const errorMessage = error instanceof Error ? error.message : "Failed to reset password. Please try again."
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { EventOut } from "./services/calendar-service"
+import type { EventOut } from "./types/api"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -18,7 +18,7 @@ export function formatEventFromAPI(event: EventOut) {
 }
 
 // Format event from app format to API format
-export function formatEventForAPI(event: any) {
+export function formatEventForAPI(event: { title: string; start: Date; end?: Date }) {
   return {
     title: event.title,
     start_time: event.start.toISOString(),

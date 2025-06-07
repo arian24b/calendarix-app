@@ -413,7 +413,7 @@ export default function TasksPage() {
         </ActionSheetContent>
       </ActionSheet>
 
-      <BottomNav currentPath="/tasks" />
+      <BottomNav />
     </div>
   )
 }

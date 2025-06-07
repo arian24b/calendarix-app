@@ -6,7 +6,7 @@ interface LogEntry {
   timestamp: string
   level: LogLevel
   message: string
-  context?: any
+  context?: Record<string, unknown>
 }
 
 class Logger {
@@ -16,7 +16,7 @@ class Logger {
     return new Date().toISOString().replace("T", " ").substring(0, 19)
   }
 
-  private createLogEntry(level: LogLevel, message: string, context?: any): LogEntry {
+  private createLogEntry(level: LogLevel, message: string, context?: Record<string, unknown>): LogEntry {
     return {
       timestamp: this.formatTimestamp(),
       level,
@@ -46,22 +46,22 @@ class Logger {
     }
   }
 
-  info(message: string, context?: any): void {
+  info(message: string, context?: Record<string, unknown>): void {
     const entry = this.createLogEntry("info", message, context)
     this.output(entry)
   }
 
-  warn(message: string, context?: any): void {
+  warn(message: string, context?: Record<string, unknown>): void {
     const entry = this.createLogEntry("warn", message, context)
     this.output(entry)
   }
 
-  error(message: string, context?: any): void {
+  error(message: string, context?: Record<string, unknown>): void {
     const entry = this.createLogEntry("error", message, context)
     this.output(entry)
   }
 
-  debug(message: string, context?: any): void {
+  debug(message: string, context?: Record<string, unknown>): void {
     if (this.isDevelopment) {
       const entry = this.createLogEntry("debug", message, context)
       this.output(entry)

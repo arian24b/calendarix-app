@@ -6,46 +6,38 @@ import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Plus, Moon } from "lucide-react"
 import Link from "next/link"
-import { getAlarms } from "@/lib/services/alarm-service"
+import { getAlarms, type Alarm } from "@/lib/services/alarm-service"
 
 export default function ClockPage() {
   const router = useRouter()
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [smartClockEnabled, setSmartClockEnabled] = useState(false)
-  const [alarms, setAlarms] = useState([])
+  const [alarms, setAlarms] = useState<Alarm[]>([])
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-
     const loadedAlarms = getAlarms()
     if (loadedAlarms.length === 0) {
       // Set default alarms if none exist
-      const defaultAlarms = [
+      const defaultAlarms: Alarm[] = [
         {
           id: "1",
           time: "6:00 AM",
           label: "breakfast time!",
-          date: "Tomorrow-Thu,Sep 2",
-          enabled: true,
-          category: "Sleep",
+          isActive: true,
+          days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
         },
         {
           id: "2",
-          time: "6:00 AM",
-          label: "breakfast time!",
-          date: "Tomorrow-Thu,Sep 2",
-          enabled: true,
-          category: "Sleep",
+          time: "8:00 PM",
+          label: "bedtime!",
+          isActive: true,
+          days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         },
         {
           id: "3",
-          time: "6:00 AM",
-          label: "breakfast time!",
-          date: "Tomorrow-Thu,Sep 2",
-          enabled: true,
-          category: "Sleep",
+          time: "12:00 PM",
+          label: "lunch time!",
+          isActive: false,
+          days: ["Monday", "Wednesday", "Friday"],
         },
       ]
       localStorage.setItem("alarms", JSON.stringify(defaultAlarms))
@@ -53,8 +45,6 @@ export default function ClockPage() {
     } else {
       setAlarms(loadedAlarms)
     }
-
-    return () => clearInterval(timer)
   }, [])
 
   const getTimeUntilAlarm = () => {
@@ -70,8 +60,8 @@ export default function ClockPage() {
     return `${hours} hours ${minutes} minutes`
   }
 
-  const toggleAlarm = (id) => {
-    setAlarms((prev) => prev.map((alarm) => (alarm.id === id ? { ...alarm, enabled: !alarm.enabled } : alarm)))
+  const toggleAlarm = (id: string) => {
+    setAlarms((prev) => prev.map((alarm) => (alarm.id === id ? { ...alarm, isActive: !alarm.isActive } : alarm)))
   }
 
   return (
@@ -140,17 +130,16 @@ export default function ClockPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-3">
                   <div className="text-2xl font-light text-gray-900">{alarm.time}</div>
-                  <div className="text-sm text-gray-500">{alarm.date}</div>
                   <div className="w-2 h-2 bg-[#4355B9] rounded-full"></div>
                 </div>
                 <div className="text-sm text-gray-600 mt-1">{alarm.label}</div>
                 <div className="flex items-center gap-2 mt-2">
                   <Moon className="w-4 h-4 text-[#4355B9]" />
-                  <span className="text-sm text-[#4355B9]">{alarm.category}</span>
+                  <span className="text-sm text-[#4355B9]">{alarm.days.join(", ")}</span>
                 </div>
               </div>
               <Switch
-                checked={alarm.enabled}
+                checked={alarm.isActive}
                 onCheckedChange={() => toggleAlarm(alarm.id)}
                 className="data-[state=checked]:bg-[#4355B9]"
               />

@@ -50,7 +50,7 @@ export default function CategoryDetailPage({ params }: { params: { id: string } 
         </div>
       </div>
 
-      <BottomNav currentPath="/categories" />
+      <BottomNav />
     </div>
   )
 }
