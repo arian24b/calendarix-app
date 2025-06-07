@@ -4,8 +4,9 @@ import type React from "react"
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Calendar, Clock, Smartphone } from "lucide-react"
+import { ChevronLeft, ChevronRight, } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 interface OnboardingSlide {
   icon: React.ReactNode
@@ -15,22 +16,10 @@ interface OnboardingSlide {
 
 const slides: OnboardingSlide[] = [
   {
-    icon: <Calendar className="w-16 h-16 text-white" />,
-    title: "Smart Calendar",
+    icon: <Image src="/icons/icon.png" alt="Calendarix" className="size-12 text-purple-600" />,
+    title: "It's Time to Organize your Day!",
     description:
       "Organize your events, appointments, and tasks in one beautiful interface. Never miss an important moment again.",
-  },
-  {
-    icon: <Clock className="w-16 h-16 text-white" />,
-    title: "Smart Alarms",
-    description:
-      "Set intelligent reminders and alarms that adapt to your schedule. Wake up refreshed and stay on track.",
-  },
-  {
-    icon: <Smartphone className="w-16 h-16 text-white" />,
-    title: "Works Offline",
-    description:
-      "Access your calendar and alarms even without internet. Your data syncs automatically when you're back online.",
   },
 ]
 
