@@ -11,21 +11,19 @@ export const env = {
   NODE_ENV: process.env.NODE_ENV || "development",
   // API Configuration
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "https://api.calendarix.pro",
-  NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "https://api.calendarix.pro",
-  
+
   // Google OAuth Configuration
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
   NEXT_PUBLIC_GOOGLE_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
-  
+
   // Application URLs
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  NEXTAUTH_URL: process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  
+
   // Feature flags
   isProduction: process.env.NODE_ENV === "production",
   isDevelopment: process.env.NODE_ENV === "development",
-  isPreview: !process.env.NEXT_PUBLIC_API_URL || 
+  isPreview: !process.env.NEXT_PUBLIC_API_URL ||
              process.env.NEXT_PUBLIC_API_URL.includes("localhost") ||
              process.env.NEXT_PUBLIC_API_URL === ""
 };

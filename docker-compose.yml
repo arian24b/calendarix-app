@@ -8,12 +8,10 @@ services:
       - NODE_ENV=production
 
       # API Configuration
-      - NEXT_PUBLIC_API_BASE_URL=https://api.calendarix.pro
       - NEXT_PUBLIC_API_URL=https://api.calendarix.pro
 
       # Application URLs
       - NEXT_PUBLIC_APP_URL=https://app.calendarix.pro
-      - NEXTAUTH_URL=https://app.calendarix.pro
 
       # Google OAuth Configuration (replace with actual values from Portainer)
       - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}

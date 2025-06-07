@@ -10,7 +10,7 @@ export async function getCurrentUser() {
 
   try {
     // Make API call to get current user
-    const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+    const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

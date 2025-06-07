@@ -21,8 +21,8 @@ interface User {
 // Check if we're in a preview/demo environment
 function isPreviewEnvironment(): boolean {
   return (
-    !env.NEXT_PUBLIC_API_BASE_URL ||
-    env.NEXT_PUBLIC_API_BASE_URL.includes("localhost") ||
+    !env.NEXT_PUBLIC_API_URL ||
+    env.NEXT_PUBLIC_API_URL.includes("localhost") ||
     (typeof window !== "undefined" && window.location.hostname.includes("v0.dev"))
   )
 }
